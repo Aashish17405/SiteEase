@@ -5,12 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bold Text Changer</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="index.css">
 </head>
-<body class="p-5 bg-[#2A292B] text-[#FEFCFF]">
-    <h1 class="text-lg font-semibold mb-4">Color Blind Helper</h1>
-    <button id="boldButton" class="bg-blue-500 text-white font-bold py-2 px-4 rounded hover:bg-blue-600">
-        Make Text Bold
-    </button>
+<body>
+    <div class="p-5 bg-[#2A292B] text-[#FEFCFF]">
+        <h1 class="text-lg font-semibold mx-8">Color Blind Helper</h1>
+    
+        <label>Red-Green Blindness</label>
+        <div class="container">
+            <input type="checkbox" id="red-green">
+            <label for="red-green" class="button"></label>
+        </div>
+
+        <label>Blue-Yellow Blindness</label>
+        <div class="container">
+            <input type="checkbox" id="check">
+            <label for="check" class="button"></label>
+        </div>
+
+        <label>Achromatopsia</label>
+        <div class="container">
+            <input type="checkbox" id="Achromatopsia">
+            <label for="Achromatopsia" class="button"></label>
+        </div>
+    </div>
     <script src="popup.js"></script>
 </body>
 </html>
