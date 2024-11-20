@@ -1,12 +1,13 @@
-let isBold = false;
 let isRed = false;
+let isBlue = false;
+let isAchromotopic = false;
 
-document.getElementById('check').addEventListener('click', () => {
+document.getElementById('blue-yellow').addEventListener('click', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        isBold = !isBold;
+        isBlue = !isBlue;
         chrome.tabs.sendMessage(tabs[0].id, { 
-            action: 'makeBold', 
-            isBold 
+            action: 'cyan-beige',
+            isBlue
         });
     });
 });
@@ -17,6 +18,16 @@ document.getElementById('red-green').addEventListener('click', () => {
         chrome.tabs.sendMessage(tabs[0].id, { 
             action: 'orange-turquoise',
             isRed
+        });
+    });
+});
+
+document.getElementById('check').addEventListener('click', () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        isAchromotopic = !isAchromotopic;
+        chrome.tabs.sendMessage(tabs[0].id, { 
+            action: 'achromotopic', 
+            isAchromotopic 
         });
     });
 });
