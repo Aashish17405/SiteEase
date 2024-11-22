@@ -6,29 +6,46 @@
     <title>Bold Text Changer</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
+    <link href="https://fonts.cdnfonts.com/css/opendyslexic" rel="stylesheet">
 </head>
 <body>
     <div class="p-5 bg-[#2A292B] text-[#FEFCFF]">
         <h1 class="text-lg font-semibold mx-8">Color Blind Helper</h1>
     
-        <label>Red-Green Blindness</label>
-        <div class="container">
-            <input type="checkbox" id="red-green">
-            <label for="red-green" class="button"></label>
+        <div class="flex items-center space-x-2">
+            <label>Red-Green Blindness</label>
+            <div class="container">
+                <input type="checkbox" id="red-green">
+                <label for="red-green" class="button"></label>
+            </div>
         </div>
 
-        <label>Blue-Yellow Blindness</label>
-        <div class="container">
-            <input type="checkbox" id="blue-yellow">
-            <label for="blue-yellow" class="button"></label>
+        <div class="flex items-center space-x-2">
+            <label>Blue-Yellow Blindness</label>
+            <div class="container">
+                <input type="checkbox" id="blue-yellow">
+                <label for="blue-yellow" class="button"></label>
+            </div>
         </div>
 
-        <label>Achromatopsia</label>
-        <div class="container">
-            <input type="checkbox" id="check">
-            <label for="check" class="button"></label>
+        <div class="flex items-center space-x-2"> 
+            <label>Achromatopsia</label> 
+                <div class="container"> 
+                    <input type="checkbox" id="check"> <label for="check" class="button">
+                </label> 
+            </div> 
         </div>
+
+        <div class="flex items-center space-x-2">
+            <label>Dyslexia</label>
+            <div class="container">
+                <input type="checkbox" id="dyslexia">
+                <label for="dyslexia" class="button"></label>
+            </div>
+        </div>
+        
     </div>
+    <p style="font-family: 'OpenDyslexic', sans-serif">This text uses the OpenDyslexic3 font.</p>
     <script src="popup.js"></script>
 </body>
 </html>

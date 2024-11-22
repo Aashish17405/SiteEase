@@ -86,4 +86,23 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             }
         }
     }
+
+    if (request.action === 'dyslexia') {
+        for (let element of elements) {
+            if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') {
+                continue;
+            }
+    
+            if (!originalStyles.has(element)) {
+                originalStyles.set(element, { fontFamily: window.getComputedStyle(element).fontFamily });
+            }
+    
+            if (request.isdsylexic) {
+                console.log('sp')
+                element.style.fontFamily = 'OpenDyslexic', sans-serif;
+            } else {
+                element.style.fontFamily = originalStyles.get(element).fontFamily || '';
+            }
+        }
+    }
 });

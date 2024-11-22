@@ -1,6 +1,7 @@
 let isRed = false;
 let isBlue = false;
 let isAchromotopic = false;
+let isdsylexic = false;
 
 document.getElementById('blue-yellow').addEventListener('click', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -28,6 +29,16 @@ document.getElementById('check').addEventListener('click', () => {
         chrome.tabs.sendMessage(tabs[0].id, { 
             action: 'achromotopic', 
             isAchromotopic 
+        });
+    });
+});
+
+document.getElementById('dyslexia').addEventListener('click', () => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        isdsylexic = !isdsylexic;
+        chrome.tabs.sendMessage(tabs[0].id, { 
+            action: 'dyslexia', 
+            isdsylexic 
         });
     });
 });
