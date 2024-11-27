@@ -1,11 +1,11 @@
 const originalStyles = new Map();
-const dyslexicFontURL = 'https://fonts.googleapis.com/css2?family=OpenDyslexic&display=swap';
+const dyslexicFontURL = 'https://fonts.cdnfonts.com/css/opendyslexic';
 let dyslexicFontApplied = false;
 
 // Listen for messages
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const elements = document.body.getElementsByTagName('*');
-
+    console.log('Current state:', { isDyslexic: request.isdyslexic, dyslexicFontApplied });
     if (request.action === 'orange-turquoise') {
         handleColorBlindness(elements, 'orange-turquoise', request.isRed);
     } else if (request.action === 'cyan-beige') {
@@ -13,7 +13,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     } else if (request.action === 'achromotopic') {
         handleAchromotopic(elements, request.isAchromotopic);
     } else if (request.action === 'dyslexia') {
-        handleDyslexiaFont(request.isdyslexic);
+        if (request.isdyslexic && !dyslexicFontApplied) {
+            console.log('Applying OpenDyslexic font...');
+            applyDyslexicFont();
+        } else if (!request.isdyslexic && dyslexicFontApplied) {
+            console.log('Removing OpenDyslexic font...');
+            removeDyslexicFont();
+        }
     }
 });
 
@@ -58,23 +64,32 @@ function handleAchromotopic(elements, isActive) {
     }
 }
 
-function handleDyslexiaFont(isDyslexic) {
-    if (isDyslexic && !dyslexicFontApplied) {
-        console.log('Applying OpenDyslexic font');
+function applyDyslexicFont() {
+    const existingLink = document.getElementById('dyslexicFontStylesheet');
+    if (!existingLink) {
         const link = document.createElement('link');
         link.href = dyslexicFontURL;
         link.rel = 'stylesheet';
         link.id = 'dyslexicFontStylesheet';
         document.head.appendChild(link);
 
-        document.body.style.fontFamily = "'OpenDyslexic', Arial, sans-serif";
-        dyslexicFontApplied = true;
-    } else {
-        console.log('Removing OpenDyslexic font');
-        const link = document.getElementById('dyslexicFontStylesheet');
-        if (link) link.remove();
+        // Wait until the font loads to apply
+        link.onload = () => {
+            console.log('Font stylesheet loaded. Applying font family...');
+            document.body.style.fontFamily = "'OpenDyslexic', Arial, sans-serif";
+            dyslexicFontApplied = true;
+        };
 
-        document.body.style.fontFamily = '';
-        dyslexicFontApplied = false;
+        link.onerror = () => {
+            console.error('Failed to load OpenDyslexic font stylesheet.');
+        };
     }
+}
+
+function removeDyslexicFont() {
+    const link = document.getElementById('dyslexicFontStylesheet');
+    if (link) link.remove();
+
+    document.body.style.fontFamily = '';
+    dyslexicFontApplied = false;
 }
