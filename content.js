@@ -2,7 +2,6 @@ const originalStyles = new Map();
 const dyslexicFontURL = 'https://fonts.cdnfonts.com/css/opendyslexic';
 let dyslexicFontApplied = false;
 
-// Listen for messages
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const elements = document.body.getElementsByTagName('*');
     console.log('Current state:', { isDyslexic: request.isdyslexic, dyslexicFontApplied });
@@ -23,7 +22,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 });
 
-// Helper Functions
 
 function handleColorBlindness(elements, type, isActive) {
     for (let element of elements) {
@@ -73,7 +71,6 @@ function applyDyslexicFont() {
         link.id = 'dyslexicFontStylesheet';
         document.head.appendChild(link);
 
-        // Wait until the font loads to apply
         link.onload = () => {
             console.log('Font stylesheet loaded. Applying font family...');
             document.body.style.fontFamily = "'OpenDyslexic', Arial, sans-serif";

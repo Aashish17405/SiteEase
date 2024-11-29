@@ -23,7 +23,7 @@ document.getElementById('red-green').addEventListener('click', () => {
     });
 });
 
-document.getElementById('check').addEventListener('click', () => {
+document.getElementById('achromatopsia').addEventListener('click', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         isAchromotopic = !isAchromotopic;
         chrome.tabs.sendMessage(tabs[0].id, { 

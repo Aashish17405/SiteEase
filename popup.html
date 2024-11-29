@@ -7,45 +7,75 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
     <link href="https://fonts.cdnfonts.com/css/opendyslexic" rel="stylesheet">
+    <style>
+        /* General toggle styles */
+        label {
+            transition: background-color 0.3s ease;
+        }
+
+        /* Moving the circle on toggle */
+        input[type="checkbox"]:checked + label span {
+            transform: translateX(1.5rem); /* Move circle to the right */
+        }
+
+        /* Smooth transition for the circle */
+        label span {
+            transition: transform 0.3s ease;
+        }
+    </style>
 </head>
-<body>
-    <div class="p-5 bg-[#2A292B] text-[#FEFCFF]">
-        <h1 class="text-lg font-semibold mx-8">Visual Aid</h1>
-    
-        <div class="flex items-center space-x-2">
-            <label>Red-Green Blindness</label>
-            <div class="container">
-                <input type="checkbox" id="red-green">
-                <label for="red-green" class="button"></label>
-            </div>
-        </div>
-
-        <div class="flex items-center space-x-2">
-            <label>Blue-Yellow Blindness</label>
-            <div class="container">
-                <input type="checkbox" id="blue-yellow">
-                <label for="blue-yellow" class="button"></label>
-            </div>
-        </div>
-
-        <div class="flex items-center space-x-2"> 
-            <label>Achromatopsia</label> 
-                <div class="container"> 
-                    <input type="checkbox" id="check"> <label for="check" class="button">
-                </label> 
-            </div> 
-        </div>
-
-        <div class="flex items-center space-x-2">
-            <label>Dyslexia</label>
-            <div class="container">
-                <input type="checkbox" id="dyslexia">
-                <label for="dyslexia" class="button"></label>
+<body class="bg-gray-900 flex items-center justify-center min-h-screen">
+    <div class="p-6 bg-gray-100 text-gray-900">
+        <!-- Header -->
+        <div class="flex items-center mb-6 ml-7">
+            <img src="icon-48x48.png" alt="logo" class="w-10 h-10 rounded-lg mr-3 shadow-md">
+            <h1 class="text-2xl font-bold tracking-wide text-green-700">Site Ease</h1>
+        </div>        
+        
+        <!-- Red-Green Blindness -->
+        <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors">
+            <label for="red-green" class="text-sm font-medium">Red-Green Blindness</label>
+            <div class="ml-12">
+                <input type="checkbox" id="red-green" class="hidden">
+                <label for="red-green" class="w-12 h-6 bg-blue-500 rounded-full block relative cursor-pointer">
+                    <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform"></span>
+                </label>
             </div>
         </div>
         
+        <!-- Blue-Yellow Blindness -->
+        <div class="flex items-center justify-between bg-white p-2 mt-4 rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors">
+            <label for="blue-yellow" class="text-sm font-medium">Blue-Yellow Blindness</label>
+            <div class="ml-12">
+                <input type="checkbox" id="blue-yellow" class="hidden">
+                <label for="blue-yellow" class="w-12 h-6 bg-red-500 rounded-full block relative cursor-pointer">
+                    <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform"></span>
+                </label>
+            </div>
+        </div>
+        
+        <!-- Achromatopsia -->
+        <div class="flex items-center justify-between bg-white p-2 mt-4 rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors">
+            <label for="achromatopsia" class="text-sm font-medium">Achromatopsia</label>
+            <div class="ml-12">
+                <input type="checkbox" id="achromatopsia" class="hidden">
+                <label for="achromatopsia" class="w-12 h-6 bg-gray-500 rounded-full block relative cursor-pointer">
+                    <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform"></span>
+                </label>
+            </div>
+        </div>
+        
+        <!-- Dyslexia -->
+        <div class="flex items-center justify-between bg-white p-2 mt-4 rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors" style="font-family: 'OpenDyslexic', sans-serif">
+            <label for="dyslexia" class="text-sm font-medium">Dyslexia</label>
+            <div class="ml-12">
+                <input type="checkbox" id="dyslexia" class="hidden">
+                <label for="dyslexia" class="w-12 h-6 bg-gray-500 rounded-full block relative cursor-pointer">
+                    <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform"></span>
+                </label>
+            </div>
+        </div>
     </div>
-    <p style="font-family: 'OpenDyslexic', sans-serif">This text uses the OpenDyslexic3 font.</p>
     <script src="popup.js"></script>
 </body>
 </html>
