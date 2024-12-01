@@ -2,9 +2,11 @@ const originalStyles = new Map();
 const dyslexicFontURL = 'https://fonts.cdnfonts.com/css/opendyslexic';
 let dyslexicFontApplied = false;
 
+// Listener for messages from popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const elements = document.body.getElementsByTagName('*');
     console.log('Current state:', { isDyslexic: request.isdyslexic, dyslexicFontApplied });
+
     if (request.action === 'orange-turquoise') {
         handleColorBlindness(elements, 'orange-turquoise', request.isRed);
     } else if (request.action === 'cyan-beige') {
@@ -19,10 +21,23 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             console.log('Removing OpenDyslexic font...');
             removeDyslexicFont();
         }
+
+        // Save dyslexia state
+        chrome.storage.sync.set({ isDyslexic: request.isdyslexic }, () => {
+            console.log(`Saved isDyslexic state: ${request.isdyslexic}`);
+        });
     }
 });
 
+// Retrieve saved state on load
+chrome.storage.sync.get(['isDyslexic'], (result) => {
+    if (result.isDyslexic) {
+        console.log('Applying saved Dyslexic font state...');
+        applyDyslexicFont();
+    }
+});
 
+// Handle color blindness transformations
 function handleColorBlindness(elements, type, isActive) {
     for (let element of elements) {
         if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') continue;
@@ -50,6 +65,7 @@ function handleColorBlindness(elements, type, isActive) {
     }
 }
 
+// Handle achromotopic transformation
 function handleAchromotopic(elements, isActive) {
     for (let element of elements) {
         if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') continue;
@@ -62,6 +78,7 @@ function handleAchromotopic(elements, isActive) {
     }
 }
 
+// Apply Dyslexic font
 function applyDyslexicFont() {
     const existingLink = document.getElementById('dyslexicFontStylesheet');
     if (!existingLink) {
@@ -83,6 +100,7 @@ function applyDyslexicFont() {
     }
 }
 
+// Remove Dyslexic font
 function removeDyslexicFont() {
     const link = document.getElementById('dyslexicFontStylesheet');
     if (link) link.remove();

@@ -3,7 +3,12 @@
     "name": "Text Style Toggle",
     "version": "1.0",
     "description": "Toggle text style on the webpage.",
-    "permissions": ["activeTab"],
+    "permissions": [
+        "storage",
+        "activeTab",
+        "tabs",
+        "scripting"
+    ],
     "background": {
         "service_worker": "background.js"
     },
