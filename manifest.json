@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "Text Style Toggle",
+    "name": "Site Ease",
     "version": "1.0",
     "description": "Toggle text style on the webpage.",
     "permissions": [
