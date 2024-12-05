@@ -1,99 +1,114 @@
 let isRed = false;
 let isBlue = false;
-let isAchromotopic = false;
+let isAchromatopsic = false;
 let isDyslexic = false;
 
-document.getElementById('blue-yellow').addEventListener('click', () => {
+const DYSLEXIA_KEY = 'isDyslexic';
+const ACHROMATOPSIA_KEY = 'isAchromatopsic';
+const BLUE_YELLOW_KEY = 'isBlue';
+const RED_GREEN_KEY = 'isRed';
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize event listeners
+    document.getElementById('blue-yellow').addEventListener('click', toggleBlueYellow);
+    document.getElementById('red-green').addEventListener('click', toggleRedGreen);
+    document.getElementById('achromatopsia').addEventListener('click', toggleAchromatopsia);
+    document.getElementById('dyslexia').addEventListener('click', toggleDyslexia);
+
+    // Load and apply states
+    loadAndApplyToggleState(DYSLEXIA_KEY, 'dyslexia', 'dyslexia-toggle', (state) => (isDyslexic = state));
+    loadAndApplyToggleState(ACHROMATOPSIA_KEY, 'achromatopsia', 'achromatopsia-toggle', (state) => (isAchromatopsic = state));
+    loadAndApplyToggleState(BLUE_YELLOW_KEY, 'blue-yellow', 'blue-yellow-toggle');
+    loadAndApplyToggleState(RED_GREEN_KEY, 'red-green', 'red-green-toggle');
+});
+
+function loadAndApplyToggleState(storageKey, elementId, toggleId, updateStateCallback) {
+    chrome.storage.sync.get([storageKey], (result) => {
+        const savedState = result[storageKey] || false;
+        updateStateCallback(savedState)
+        console.log('Saved state: ' + savedState);
+        updateToggleUI(savedState, elementId, toggleId);
+    });
+}
+
+function toggleBlueYellow() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         isBlue = !isBlue;
+        chrome.storage.sync.set({ [BLUE_YELLOW_KEY]: isBlue });
         chrome.tabs.sendMessage(tabs[0].id, { 
             action: 'cyan-beige',
             isBlue
         });
     });
-});
+}
 
-document.getElementById('red-green').addEventListener('click', () => {
+function toggleRedGreen() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         isRed = !isRed;
+        chrome.storage.sync.set({ [RED_GREEN_KEY]: isRed });
         chrome.tabs.sendMessage(tabs[0].id, { 
             action: 'orange-turquoise',
             isRed
         });
     });
-});
+}
 
-document.getElementById('achromatopsia').addEventListener('click', () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        isAchromotopic = !isAchromotopic;
-        chrome.tabs.sendMessage(tabs[0].id, { 
-            action: 'achromotopic', 
-            isAchromotopic 
-        });
-    });
-});
-
-
-document.getElementById('dyslexia').addEventListener('click', () => {
+function toggleDyslexia() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         isDyslexic = !isDyslexic;
+        chrome.storage.sync.set({ [DYSLEXIA_KEY]: isDyslexic }, () => {
+            console.log(`Dyslexia mode set to: ${isDyslexic}`);
+            
+            chrome.tabs.sendMessage(tabs[0].id, {
+                action: 'dyslexia',
+                isDyslexic
+            });
 
-        chrome.storage.sync.set({ isDyslexic }, () => {
-            console.log(`Dyslexic mode set to: ${isDyslexic}`);
-        });
-
-        chrome.tabs.sendMessage(tabs[0].id, {
-            action: 'dyslexia',
-            isdyslexic: isDyslexic
+            updateToggleUI(isDyslexic, 'dyslexia', 'dyslexia-toggle');
         });
     });
-});
+}
 
-const DYSLEXIA_KEY = 'isdyslexic';
-
-document.addEventListener('DOMContentLoaded', () => {
-    const toggle = document.getElementById('dyslexia-toggle');
-    const checkbox = document.getElementById('dyslexia');
-
-    // Load state from localStorage
-    const isDyslexic = JSON.parse(localStorage.getItem(DYSLEXIA_KEY)) || false;
-
-    // Apply the state to the toggle and UI
-    updateToggleUI(isDyslexic);
-
-    // Handle toggle changes
-    checkbox.addEventListener('change', () => {
-        const currentState = checkbox.checked;
-
-        // Save state to localStorage
-        localStorage.setItem(DYSLEXIA_KEY, JSON.stringify(currentState));
-
-        // Update the toggle UI
-        updateToggleUI(currentState);
-
-        // Apply changes to the current site (add your logic here)
-        console.log('Dyslexia state changed:', currentState);
+function toggleAchromatopsia() {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        isAchromatopsic = !isAchromatopsic;
+        chrome.storage.sync.set({ [ACHROMATOPSIA_KEY]: isAchromatopsic }, () => {
+            console.log(`Achromatopsia mode set to: ${isAchromatopsic}`);
+            
+            chrome.tabs.sendMessage(tabs[0].id, {
+                action: 'achromatopsia',
+                isAchromatopsic
+            });
+            updateToggleUI(isAchromatopsic, 'achromatopsia', 'achromatopsia-toggle');
+        });
     });
-});
+}
 
-// Function to update the toggle button UI
-function updateToggleUI(isDyslexic) {
-    const toggle = document.getElementById('dyslexia-toggle');
-    const checkbox = document.getElementById('dyslexia');
+// Generalized toggle UI update function
+function updateToggleUI(isEnabled, elementId, toggleId) {
+    const toggle = document.getElementById(toggleId);
+    const checkbox = document.getElementById(elementId);
 
-    if (isDyslexic) {
+    if (!toggle || !checkbox) return;
+
+    if (isEnabled) {
+        console.log('Toggle UI')
         toggle.classList.replace('bg-gray-500', 'bg-green-500');
-        toggle.querySelector('span').classList.add('translate-x-6');
+        toggle.querySelector('span').style.transform = 'translateX(1.5rem)';
         checkbox.checked = true;
 
-        // Apply dyslexia-friendly font (example)
-        document.body.style.fontFamily = "'OpenDyslexic', sans-serif";
+        // Specific handling for dyslexia font
+        if (elementId === 'dyslexia') {
+            document.body.style.fontFamily = "'OpenDyslexic', sans-serif";
+        }
     } else {
         toggle.classList.replace('bg-green-500', 'bg-gray-500');
-        toggle.querySelector('span').classList.remove('translate-x-6');
+        toggle.querySelector('span').style.transform = 'translateX(0)';
         checkbox.checked = false;
 
-        // Reset font
-        document.body.style.fontFamily = '';
+        // Reset dyslexia font
+        if (elementId === 'dyslexia') {
+            document.body.style.fontFamily = '';
+        }
     }
 }
