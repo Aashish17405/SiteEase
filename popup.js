@@ -18,8 +18,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load and apply states
     loadAndApplyToggleState(DYSLEXIA_KEY, 'dyslexia', 'dyslexia-toggle', (state) => (isDyslexic = state));
     loadAndApplyToggleState(ACHROMATOPSIA_KEY, 'achromatopsia', 'achromatopsia-toggle', (state) => (isAchromatopsic = state));
-    loadAndApplyToggleState(BLUE_YELLOW_KEY, 'blue-yellow', 'blue-yellow-toggle');
-    loadAndApplyToggleState(RED_GREEN_KEY, 'red-green', 'red-green-toggle');
+    loadAndApplyToggleState(BLUE_YELLOW_KEY, 'blue-yellow', 'blue-yellow-toggle', (state) => (isBlue = state));
+    loadAndApplyToggleState(RED_GREEN_KEY, 'red-green', 'red-green-toggle', (state) => (isRed = state));
 });
 
 function loadAndApplyToggleState(storageKey, elementId, toggleId, updateStateCallback) {
@@ -31,24 +31,49 @@ function loadAndApplyToggleState(storageKey, elementId, toggleId, updateStateCal
     });
 }
 
-function toggleBlueYellow() {
+function toggleRedGreen() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        isBlue = !isBlue;
-        chrome.storage.sync.set({ [BLUE_YELLOW_KEY]: isBlue });
-        chrome.tabs.sendMessage(tabs[0].id, { 
-            action: 'cyan-beige',
-            isBlue
+        isRed = !isRed;
+        chrome.storage.sync.set({ [RED_GREEN_KEY]: isRed }, () => {
+            console.log(`Red-Green mode set to: ${isRed}`);
+            
+            chrome.tabs.sendMessage(tabs[0].id, {
+                action: 'orange-turquoise',
+                isRed
+            });
+
+            updateToggleUI(isRed, 'red-green', 'red-green-toggle');
         });
     });
 }
 
-function toggleRedGreen() {
+function toggleBlueYellow() {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        isRed = !isRed;
-        chrome.storage.sync.set({ [RED_GREEN_KEY]: isRed });
-        chrome.tabs.sendMessage(tabs[0].id, { 
-            action: 'orange-turquoise',
-            isRed
+        isBlue = !isBlue;
+        chrome.storage.sync.set({ [BLUE_YELLOW_KEY]: isBlue }, () => {
+            console.log(`Blue-Yellow mode set to: ${isBlue}`);
+            
+            chrome.tabs.sendMessage(tabs[0].id, {
+                action: 'cyan-beige',
+                isBlue
+            });
+
+            updateToggleUI(isBlue, 'blue-yellow', 'blue-yellow-toggle');
+        });
+    });
+}
+
+function toggleAchromatopsia() {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+        isAchromatopsic = !isAchromatopsic;
+        chrome.storage.sync.set({ [ACHROMATOPSIA_KEY]: isAchromatopsic }, () => {
+            console.log(`Achromatopsia mode set to: ${isAchromatopsic}`);
+            
+            chrome.tabs.sendMessage(tabs[0].id, {
+                action: 'achromatopsia',
+                isAchromatopsic
+            });
+            updateToggleUI(isAchromatopsic, 'achromatopsia', 'achromatopsia-toggle');
         });
     });
 }
@@ -65,21 +90,6 @@ function toggleDyslexia() {
             });
 
             updateToggleUI(isDyslexic, 'dyslexia', 'dyslexia-toggle');
-        });
-    });
-}
-
-function toggleAchromatopsia() {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        isAchromatopsic = !isAchromatopsic;
-        chrome.storage.sync.set({ [ACHROMATOPSIA_KEY]: isAchromatopsic }, () => {
-            console.log(`Achromatopsia mode set to: ${isAchromatopsic}`);
-            
-            chrome.tabs.sendMessage(tabs[0].id, {
-                action: 'achromatopsia',
-                isAchromatopsic
-            });
-            updateToggleUI(isAchromatopsic, 'achromatopsia', 'achromatopsia-toggle');
         });
     });
 }

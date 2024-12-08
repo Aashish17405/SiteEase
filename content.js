@@ -2,6 +2,8 @@ const originalStyles = new Map();
 const dyslexicFontURL = 'https://cdn.jsdelivr.net/npm/opendyslexic@0.0.3/fonts/OpenDyslexic-Regular.woff2';
 let dyslexicFontApplied = false;
 let isAchromatopsicStyleApplied = false;
+let isRedApplied = false;
+let isBlueApplied = false;
 
 // Listener for messages from popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -10,16 +12,36 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log('Current state:', { isAchromatopsic: request.isAchromatopsic, isAchromatopsicStyleApplied});
 
     if (request.action === 'orange-turquoise') {
-        handleColorBlindness(elements, 'orange-turquoise', request.isRed);
+        if(request.isRed && !isRedApplied){
+            console.log('Applying Orange Turquoise style... ');
+            applyRedGreenStyle(elements,request.isRed)
+        }else if(request.isRed && isRedApplied){
+            console.log('Removing Orange Turquoise style...');
+            removeRedGreenStyle(elements);
+        }
+
+        chrome.storage.sync.set({ isRed: request.isRed}, () => {
+            console.log(`Saved isARed state: ${request.isRed}`);
+        })
     } else if (request.action === 'cyan-beige') {
-        handleColorBlindness(elements, 'cyan-beige', request.isBlue);
+        if(request.isBlue && !isBlueApplied){
+            console.log('Applying Cyan Beige style...')
+            applyYellowBlueStyle(elements, request.isBlue);
+        }else if(!request.isBlue && isBlueApplied){
+            console.log('Removing Cyan Beige style...');
+            removeYellowBlueStyle(elements);
+        }
+
+        chrome.storage.sync.set({ isBlue: request.isBlue}, () => {
+            console.log(`Saved isBlue state: ${request.isBlue}`);
+        })
     } else if (request.action === 'achromatopsia') {
         if(request.isAchromatopsic && !isAchromatopsicStyleApplied){
             console.log('Applying Achromatopsia style...');
             applyAchromatopsicStyle(elements, request.isAchromatopsic);
         }else if(!request.isAchromatopsic && isAchromatopsicStyleApplied){
             console.log('Removing Achromatopsia style...');
-            removeAchromatopsicStyle(elements, request.isAchromatopsic);
+            removeAchromatopsicStyle(elements);
         }
 
         chrome.storage.sync.set({ isAchromatopsic: request.isAchromatopsic}, () => {
@@ -34,18 +56,26 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             removeDyslexicFont();
         }
 
-        // Save dyslexia state
         chrome.storage.sync.set({ isDyslexic: request.isdyslexic }, () => {
             console.log(`Saved isDyslexic state: ${request.isdyslexic}`);
         });
     }
 });
 
-// Handle color blindness transformations
-function handleColorBlindness(elements, type, isActive) {
+chrome.storage.sync.get(['isRed'], (result) => {
+    const isRed = result.isRed || false;
+    if (isRed) {
+        console.log('Applying saved Orange turquoise style...');
+        applyRedGreenStyle(document.body.getElementsByTagName('*'), isRed);
+    }
+});
+
+function applyRedGreenStyle(elements, isActive) {
     for (let element of elements) {
+        if (!(element instanceof Element)) continue;
         if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') continue;
 
+        // Save the original color style if not already saved
         if (!originalStyles.has(element)) {
             originalStyles.set(element, { color: window.getComputedStyle(element).color });
         }
@@ -56,16 +86,65 @@ function handleColorBlindness(elements, type, isActive) {
 
             if (rgb) {
                 let [r, g, b] = rgb.map(Number);
-
-                if (type === 'orange-turquoise') {
-                    element.style.color = r > g && r > b ? '#FFA500' : g > r && g > b ? '#40E0D0' : originalStyles.get(element).color;
-                } else if (type === 'cyan-beige') {
-                    element.style.color = b > r && b > g ? '#00ffff' : r > g && g > b ? '#F5F5DC' : originalStyles.get(element).color;
-                }
+                // Apply the red-green style logic
+                element.style.color = 
+                    r > g && r > b ? '#FFA500' : // Orange for red-dominant
+                    g > r && g > b ? '#40E0D0' : // Turquoise for green-dominant
+                    originalStyles.get(element).color; // Restore original if neither
             }
-        } else {
-            element.style.color = originalStyles.get(element).color || '';
         }
+    }
+}
+
+function removeRedGreenStyle(elements) {
+    for (let element of elements) {
+        if (!(element instanceof Element)) continue;
+
+        const originalStyle = originalStyles.get(element);
+        if (originalStyle) {
+            element.style.color = originalStyle.color || '';
+        }
+    }
+    isRedApplied = false;
+}
+
+
+chrome.storage.sync.get(['isBlue'], (result) => {
+    const isBlue = result.isBlue || false;
+    if (isBlue) {
+        console.log('Applying saved Cyan Beige style...');
+        applyYellowBlueStyle(document.body.getElementsByTagName('*'), isBlue);
+    }
+});
+
+function applyYellowBlueStyle(elements, isActive) {
+    for (let element of elements) {
+        if (!(element instanceof Element)) continue;
+        if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') continue;
+
+        if (!originalStyles.has(element)) {
+            originalStyles.set(element, { color: window.getComputedStyle(element).color });
+        }
+        if (isActive) {
+            const color = window.getComputedStyle(element).color;
+            const rgb = color.match(/\d+/g);
+
+            if (rgb) {
+                let [r, g, b] = rgb.map(Number);
+                element.style.color = b > r && b > g ? '#00ffff' : r > g && g > b ? '#F5F5DC' : originalStyles.get(element).color;
+            }
+        }
+    }
+}
+
+function removeYellowBlueStyle(elements) {
+    for (let element of elements) {
+        if (!(element instanceof Element)) continue;
+        if (!originalStyles.has(element)) {
+            originalStyles.set(element, { filter: window.getComputedStyle(element).filter });
+        }
+        element.style.color = originalStyles.get(element).color || '';
+        isBlueApplied = false;
     }
 }
 
@@ -92,7 +171,7 @@ function applyAchromatopsicStyle(elements, isActive) {
     }
 }
 
-function removeAchromatopsicStyle(elements, isActive) {
+function removeAchromatopsicStyle(elements) {
     for (let element of elements) {
         if (!(element instanceof Element)) continue;
         if (!originalStyles.has(element)) {
