@@ -12,13 +12,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     console.log('Current state:', { isAchromatopsic: request.isAchromatopsic, isAchromatopsicStyleApplied});
 
     if (request.action === 'orange-turquoise') {
-        if(request.isRed && !isRedApplied){
-            console.log('Applying Orange Turquoise style... ');
-            applyRedGreenStyle(elements,request.isRed)
-        }else if(request.isRed && isRedApplied){
+        if (request.isRed && !isRedApplied) {
+            console.log('Applying Orange Turquoise style...');
+            applyRedGreenStyle(elements, true);
+        } else if (!request.isRed && isRedApplied) {
             console.log('Removing Orange Turquoise style...');
             removeRedGreenStyle(elements);
-        }
+        }        
 
         chrome.storage.sync.set({ isRed: request.isRed}, () => {
             console.log(`Saved isARed state: ${request.isRed}`);
@@ -71,6 +71,7 @@ chrome.storage.sync.get(['isRed'], (result) => {
 });
 
 function applyRedGreenStyle(elements, isActive) {
+    isRedApplied = isActive; // Update the flag
     for (let element of elements) {
         if (!(element instanceof Element)) continue;
         if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') continue;
@@ -96,16 +97,18 @@ function applyRedGreenStyle(elements, isActive) {
     }
 }
 
+
 function removeRedGreenStyle(elements) {
     for (let element of elements) {
         if (!(element instanceof Element)) continue;
 
         const originalStyle = originalStyles.get(element);
         if (originalStyle) {
-            element.style.color = originalStyle.color || '';
+            element.style.color = originalStyle.color || ''; // Restore original color
         }
     }
-    isRedApplied = false;
+    originalStyles.clear(); // Clear saved styles after resetting
+    isRedApplied = false; // Update the flag
 }
 
 
@@ -118,6 +121,7 @@ chrome.storage.sync.get(['isBlue'], (result) => {
 });
 
 function applyYellowBlueStyle(elements, isActive) {
+    isBlueApplied = true;
     for (let element of elements) {
         if (!(element instanceof Element)) continue;
         if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') continue;
@@ -144,8 +148,9 @@ function removeYellowBlueStyle(elements) {
             originalStyles.set(element, { filter: window.getComputedStyle(element).filter });
         }
         element.style.color = originalStyles.get(element).color || '';
-        isBlueApplied = false;
     }
+    originalStyles.clear();
+    isBlueApplied = false;
 }
 
 chrome.storage.sync.get(['isAchromatopsic'], (result) => {
