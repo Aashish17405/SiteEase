@@ -5,7 +5,6 @@ let isAchromatopsicStyleApplied = false;
 let isRedApplied = false;
 let isBlueApplied = false;
 
-// Listener for messages from popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const elements = document.body.getElementsByTagName('*');
     console.log('Current state:', { isDyslexic: request.isdyslexic, dyslexicFontApplied });
@@ -71,12 +70,11 @@ chrome.storage.sync.get(['isRed'], (result) => {
 });
 
 function applyRedGreenStyle(elements, isActive) {
-    isRedApplied = isActive; // Update the flag
+    isRedApplied = isActive;
     for (let element of elements) {
         if (!(element instanceof Element)) continue;
         if (element.tagName === 'SCRIPT' || element.tagName === 'STYLE') continue;
 
-        // Save the original color style if not already saved
         if (!originalStyles.has(element)) {
             originalStyles.set(element, { color: window.getComputedStyle(element).color });
         }
@@ -87,11 +85,10 @@ function applyRedGreenStyle(elements, isActive) {
 
             if (rgb) {
                 let [r, g, b] = rgb.map(Number);
-                // Apply the red-green style logic
                 element.style.color = 
-                    r > g && r > b ? '#FFA500' : // Orange for red-dominant
-                    g > r && g > b ? '#40E0D0' : // Turquoise for green-dominant
-                    originalStyles.get(element).color; // Restore original if neither
+                    r > g && r > b ? '#FFA500' : 
+                    g > r && g > b ? '#40E0D0' : 
+                    originalStyles.get(element).color; 
             }
         }
     }
@@ -104,11 +101,11 @@ function removeRedGreenStyle(elements) {
 
         const originalStyle = originalStyles.get(element);
         if (originalStyle) {
-            element.style.color = originalStyle.color || ''; // Restore original color
+            element.style.color = originalStyle.color || ''; 
         }
     }
-    originalStyles.clear(); // Clear saved styles after resetting
-    isRedApplied = false; // Update the flag
+    originalStyles.clear(); 
+    isRedApplied = false; 
 }
 
 
@@ -194,9 +191,8 @@ chrome.storage.sync.get(['isDyslexic'], (result) => {
     }
 });
 
-// Inject Inline CSS
 function injectCssInline(id, style) {
-    if (document.getElementById(id)) return; // Avoid duplicate styles
+    if (document.getElementById(id)) return; 
 
     const head = document.head || document.getElementsByTagName('head')[0];
     const sheet = document.createElement('style');
@@ -224,7 +220,6 @@ function applyDyslexicFont() {
     dyslexicFontApplied = true;
 }
 
-// Remove Dyslexic Font
 function removeDyslexicFont() {
     const styleElement = document.getElementById('dyslexicFontStylesheet');
     if (styleElement) {

@@ -94,7 +94,6 @@ function toggleDyslexia() {
     });
 }
 
-// Generalized toggle UI update function
 function updateToggleUI(isEnabled, elementId, toggleId) {
     const toggle = document.getElementById(toggleId);
     const checkbox = document.getElementById(elementId);
@@ -107,7 +106,6 @@ function updateToggleUI(isEnabled, elementId, toggleId) {
         toggle.querySelector('span').style.transform = 'translateX(1.5rem)';
         checkbox.checked = true;
 
-        // Specific handling for dyslexia font
         if (elementId === 'dyslexia') {
             document.body.style.fontFamily = "'OpenDyslexic', sans-serif";
         }
@@ -116,7 +114,6 @@ function updateToggleUI(isEnabled, elementId, toggleId) {
         toggle.querySelector('span').style.transform = 'translateX(0)';
         checkbox.checked = false;
 
-        // Reset dyslexia font
         if (elementId === 'dyslexia') {
             document.body.style.fontFamily = '';
         }
