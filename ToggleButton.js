@@ -5,7 +5,7 @@ export default function ToggleButton({ onToggle }) {
 
   const handleClick = () => {
     setToggled(!toggled);
-    onToggle(!toggled); // Call the parent function to notify the state change
+    onToggle(!toggled); // Call the parent function to notify the state changes 
   };
 
   return (
