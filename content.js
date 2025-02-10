@@ -1,5 +1,5 @@
 const originalStyles = new Map();
-const dyslexicFontURL = 'https://cdn.jsdelivr.net/npm/opendyslexic@0.0.3/fonts/OpenDyslexic-Regular.woff2';
+const dyslexicFontURL = 'https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/open-dyslexic-regular.min.css';
 let dyslexicFontApplied = false;
 let isAchromatopsicStyleApplied = false;
 let isRedApplied = false;
@@ -7,7 +7,7 @@ let isBlueApplied = false;
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     const elements = document.body.getElementsByTagName('*');
-    console.log('Current state:', { isDyslexic: request.isdyslexic, dyslexicFontApplied });
+    console.log('Current state:', { isDyslexic: request.isDyslexic, dyslexicFontApplied });
     console.log('Current state:', { isAchromatopsic: request.isAchromatopsic, isAchromatopsicStyleApplied});
 
     if (request.action === 'orange-turquoise') {
@@ -55,8 +55,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             removeDyslexicFont();
         }
 
-        chrome.storage.sync.set({ isDyslexic: request.isdyslexic }, () => {
-            console.log(`Saved isDyslexic state: ${request.isdyslexic}`);
+        chrome.storage.sync.set({ isDyslexic: request.isDyslexic }, () => {
+            console.log(`Saved isDyslexic state: ${request.isDyslexic}`);
         });
     }
 });
@@ -198,7 +198,7 @@ function injectCssInline(id, style) {
     const sheet = document.createElement('style');
 
     sheet.setAttribute('id', id);
-    sheet.type = 'text/css';
+    // sheet.type = 'text/css';
     sheet.appendChild(document.createTextNode(style));
     head.appendChild(sheet);
 }

@@ -87,6 +87,12 @@ function toggleDyslexia() {
             chrome.tabs.sendMessage(tabs[0].id, {
                 action: 'dyslexia',
                 isDyslexic
+            }, (response) => {
+                if (chrome.runtime.lastError) {
+                    console.error('Error sending message:', chrome.runtime.lastError);
+                } else {
+                    console.log('Message sent successfully');
+                }
             });
 
             updateToggleUI(isDyslexic, 'dyslexia', 'dyslexia-toggle');
