@@ -7,6 +7,8 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="index.css">
     <link href="https://fonts.cdnfonts.com/css/opendyslexic" rel="stylesheet">
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/open-dyslexic-regular.otf" as="font" type="font/otf" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         /* General toggle styles */
         label {
@@ -75,7 +77,18 @@
                 </label>
             </div>
         </div>
+
+        <div class="flex items-center justify-between bg-white p-2 mt-4 rounded-lg border border-gray-300">
+            <span class="text-sm font-medium">Contribute to SiteEase</span>
+            <a href="https://github.com/Aashish17405/SiteEase" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="flex items-center space-x-2 px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors">
+                <i class="fab fa-github text-xl"></i>
+            </a>
+        </div>
     </div>
+
     <script src="popup.js"></script>
 </body>
 </html>
