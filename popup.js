@@ -111,10 +111,6 @@ function updateToggleUI(isEnabled, elementId, toggleId) {
         toggle.classList.replace('bg-gray-500', 'bg-green-500');
         toggle.querySelector('span').style.transform = 'translateX(1.5rem)';
         checkbox.checked = true;
-
-        if (elementId === 'dyslexia') {
-            document.body.style.fontFamily = "'OpenDyslexic', sans-serif";
-        }
     } else {
         toggle.classList.replace('bg-green-500', 'bg-gray-500');
         toggle.querySelector('span').style.transform = 'translateX(0)';

@@ -221,28 +221,151 @@ chrome.storage.sync.get(["isDyslexic"], (result) => {
 
 async function applyDyslexicFont() {
   try {
-    // Define the base64-encoded OpenDyslexic font
-    const fontBase64 = `/* Base64 encoded OpenDyslexic font will go here */`;
+    // Get the background color of the body and compute its brightness
+    const getBackgroundColor = (element) => {
+      const bgcolor = window.getComputedStyle(element).backgroundColor;
+      if (bgcolor === "rgba(0, 0, 0, 0)" || bgcolor === "transparent") {
+        return element.parentElement
+          ? getBackgroundColor(element.parentElement)
+          : "#ffffff";
+      }
+      return bgcolor;
+    };
+
+    const backgroundColor = getBackgroundColor(document.body);
+    const textColor = window.getComputedStyle(document.body).color;
+
+    // Convert RGB to HSL and determine brightness
+    const rgb2hsl = (r, g, b) => {
+      r /= 255;
+      g /= 255;
+      b /= 255;
+      const max = Math.max(r, g, b),
+        min = Math.min(r, g, b);
+      let h,
+        s,
+        l = (max + min) / 2;
+
+      if (max === min) {
+        h = s = 0;
+      } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r:
+            h = (g - b) / d + (g < b ? 6 : 0);
+            break;
+          case g:
+            h = (b - r) / d + 2;
+            break;
+          case b:
+            h = (r - g) / d + 4;
+            break;
+        }
+        h /= 6;
+      }
+      return [h * 360, s * 100, l * 100];
+    };
+
+    const rgbValues = backgroundColor.match(/\d+/g).map(Number);
+    const [hue, saturation, lightness] = rgb2hsl(...rgbValues);
+
+    // Determine if the background is light or dark
+    const isLightBackground = lightness > 50;
+
+    // Define color schemes with better contrast
+    const lightSchemes = [
+      { bg: "#fff6e6", text: "#2d2d2d" }, // Cream with dark gray
+      { bg: "#f5f5ff", text: "#1a1a1a" }, // Light blue-white with black
+      { bg: "#fff0eb", text: "#2d1f1f" }, // Soft peach with dark brown
+    ];
+
+    const darkSchemes = [
+      { bg: "#1f1f2e", text: "#ffffff" }, // Dark blue-gray with white
+      { bg: "#2d2d2d", text: "#f0f0f0" }, // Dark gray with off-white
+      { bg: "#1f2d1f", text: "#ffffff" }, // Dark green with white
+    ];
+
+    // Choose scheme based on current background
+    const scheme = isLightBackground ? lightSchemes[0] : darkSchemes[0];
 
     const dyslexicFontCSS = `
       @font-face {
         font-family: 'OpenDyslexic';
-        src: url(data:font/otf;base64,${fontBase64}) format('opentype');
+        src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/fonts/OpenDyslexic-Regular.woff2') format('woff2'),
+             url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/fonts/OpenDyslexic-Regular.woff') format('woff');
         font-weight: normal;
         font-style: normal;
+        font-display: swap;
       }
-      * {
-        font-family: 'OpenDyslexic' !important;
-        line-height: 1.5 !important;
-        letter-spacing: 0.05em !important;
+
+      /* Base text styling */
+      body, p, div, span, h1, h2, h3, h4, h5, h6, li, td, th, input, textarea {
+        font-family: 'OpenDyslexic', Arial, sans-serif !important;
+        background-color: ${scheme.bg} !important;
+        color: ${scheme.text} !important;
+        line-height: 1.8 !important;
+        text-align: left !important;
+        letter-spacing: 0.12em !important;
+        word-spacing: 0.16em !important;
+      }
+
+      /* Links with appropriate contrast */
+      a {
+        font-family: 'OpenDyslexic', Arial, sans-serif !important;
+        color: ${isLightBackground ? "#0052cc" : "#99ddff"} !important;
+        text-decoration: underline !important;
+      }
+
+      /* Code blocks and quotes */
+      pre, code, blockquote {
+        font-family: 'OpenDyslexic', monospace !important;
+        background-color: ${
+          isLightBackground ? scheme.bg : "rgba(255, 255, 255, 0.1)"
+        } !important;
+        color: ${scheme.text} !important;
+        padding: 1em !important;
+        border-left: 4px solid ${
+          isLightBackground ? "#666666" : "#cccccc"
+        } !important;
+      }
+
+      /* Form elements */
+      input, textarea, select {
+        font-family: 'OpenDyslexic', Arial, sans-serif !important;
+        background-color: ${
+          isLightBackground ? "#ffffff" : "#333333"
+        } !important;
+        color: ${isLightBackground ? "#000000" : "#ffffff"} !important;
+        border: 2px solid ${
+          isLightBackground ? "#666666" : "#999999"
+        } !important;
+      }
+
+      /* Tables */
+      th, td {
+        font-family: 'OpenDyslexic', Arial, sans-serif !important;
+        background-color: ${scheme.bg} !important;
+        color: ${scheme.text} !important;
+        border: 1px solid ${
+          isLightBackground ? "#666666" : "#999999"
+        } !important;
+      }
+
+      /* Ensure contrast for selection */
+      ::selection {
+        background-color: ${
+          isLightBackground ? "#0052cc" : "#99ddff"
+        } !important;
+        color: ${isLightBackground ? "#ffffff" : "#000000"} !important;
       }
     `;
 
     injectCssInline("dyslexicFontStylesheet", dyslexicFontCSS);
     dyslexicFontApplied = true;
-    console.log("Dyslexic font applied successfully");
+    console.log("Dyslexic styling applied successfully");
   } catch (error) {
-    console.error("Detailed error loading dyslexic font:", error);
+    console.error("Detailed error loading dyslexic styles:", error);
     console.error("Error stack:", error.stack);
   }
 }
