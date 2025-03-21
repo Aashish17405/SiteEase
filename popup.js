@@ -1,123 +1,218 @@
-let isRed = false;
-let isBlue = false;
-let isAchromatopsic = false;
-let isDyslexic = false;
+// State variables
+let states = {
+  protanopia: false,
+  deuteranopia: false,
+  blueBlinds: false,
+  yellowBlinds: false,
+  achromatopsia: false,
+  dyslexia: false,
+};
 
-const DYSLEXIA_KEY = 'isDyslexic';
-const ACHROMATOPSIA_KEY = 'isAchromatopsic';
-const BLUE_YELLOW_KEY = 'isBlue';
-const RED_GREEN_KEY = 'isRed';
+// Storage keys
+const STORAGE_KEYS = {
+  PROTANOPIA: "isProtanopia",
+  DEUTERANOPIA: "isDeuteranopia",
+  BLUE_BLINDNESS: "isBlueBlinds",
+  YELLOW_BLINDNESS: "isYellowBlinds",
+  ACHROMATOPSIA: "isAchromatopsia",
+  DYSLEXIA: "isDyslexic",
+};
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Initialize event listeners
-    document.getElementById('blue-yellow').addEventListener('click', toggleBlueYellow);
-    document.getElementById('red-green').addEventListener('click', toggleRedGreen);
-    document.getElementById('achromatopsia').addEventListener('click', toggleAchromatopsia);
-    document.getElementById('dyslexia').addEventListener('click', toggleDyslexia);
+// Initialize event listeners when DOM is loaded
+document.addEventListener("DOMContentLoaded", () => {
+  // Load saved states
+  loadSavedStates();
 
-    // Load and apply states
-    loadAndApplyToggleState(DYSLEXIA_KEY, 'dyslexia', 'dyslexia-toggle', (state) => (isDyslexic = state));
-    loadAndApplyToggleState(ACHROMATOPSIA_KEY, 'achromatopsia', 'achromatopsia-toggle', (state) => (isAchromatopsic = state));
-    loadAndApplyToggleState(BLUE_YELLOW_KEY, 'blue-yellow', 'blue-yellow-toggle', (state) => (isBlue = state));
-    loadAndApplyToggleState(RED_GREEN_KEY, 'red-green', 'red-green-toggle', (state) => (isRed = state));
+  // Set up event listeners for each toggle
+  setupToggle("protanopia", "protanopia-toggle", handleProtanopiaToggle);
+  setupToggle("deuteranopia", "deuteranopia-toggle", handleDeuteranopiaToggle);
+  setupToggle(
+    "blue-blindness",
+    "blue-blindness-toggle",
+    handleBlueBlindnessToggle
+  );
+  setupToggle(
+    "yellow-blindness",
+    "yellow-blindness-toggle",
+    handleYellowBlindnessToggle
+  );
+  setupToggle(
+    "achromatopsia",
+    "achromatopsia-toggle",
+    handleAchromatopsiaToggle
+  );
+  setupToggle("dyslexia", "dyslexia-toggle", handleDyslexiaToggle);
 });
 
-function loadAndApplyToggleState(storageKey, elementId, toggleId, updateStateCallback) {
-    chrome.storage.sync.get([storageKey], (result) => {
-        const savedState = result[storageKey] || false;
-        updateStateCallback(savedState)
-        console.log('Saved state: ' + savedState);
-        updateToggleUI(savedState, elementId, toggleId);
-    });
+// Load saved states from storage
+function loadSavedStates() {
+  chrome.storage.sync.get(Object.values(STORAGE_KEYS), (result) => {
+    // Update states and UI based on saved values
+    states.protanopia = result[STORAGE_KEYS.PROTANOPIA] || false;
+    states.deuteranopia = result[STORAGE_KEYS.DEUTERANOPIA] || false;
+    states.blueBlinds = result[STORAGE_KEYS.BLUE_BLINDNESS] || false;
+    states.yellowBlinds = result[STORAGE_KEYS.YELLOW_BLINDNESS] || false;
+    states.achromatopsia = result[STORAGE_KEYS.ACHROMATOPSIA] || false;
+    states.dyslexia = result[STORAGE_KEYS.DYSLEXIA] || false;
+
+    // Update UI to reflect saved states
+    updateToggleUI("protanopia", states.protanopia);
+    updateToggleUI("deuteranopia", states.deuteranopia);
+    updateToggleUI("blue-blindness", states.blueBlinds);
+    updateToggleUI("yellow-blindness", states.yellowBlinds);
+    updateToggleUI("achromatopsia", states.achromatopsia);
+    updateToggleUI("dyslexia", states.dyslexia);
+  });
 }
 
-function toggleRedGreen() {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        isRed = !isRed;
-        chrome.storage.sync.set({ [RED_GREEN_KEY]: isRed }, () => {
-            console.log(`Red-Green mode set to: ${isRed}`);
-            
-            chrome.tabs.sendMessage(tabs[0].id, {
-                action: 'orange-turquoise',
-                isRed
-            });
-
-            updateToggleUI(isRed, 'red-green', 'red-green-toggle');
-        });
-    });
+// Set up individual toggle
+function setupToggle(id, toggleId, handler) {
+  const checkbox = document.getElementById(id);
+  if (checkbox) {
+    checkbox.addEventListener("change", handler);
+  }
 }
 
-function toggleBlueYellow() {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        isBlue = !isBlue;
-        chrome.storage.sync.set({ [BLUE_YELLOW_KEY]: isBlue }, () => {
-            console.log(`Blue-Yellow mode set to: ${isBlue}`);
-            
-            chrome.tabs.sendMessage(tabs[0].id, {
-                action: 'cyan-beige',
-                isBlue
-            });
+// Update toggle UI
+function updateToggleUI(elementId, isEnabled) {
+  const toggle = document.getElementById(`${elementId}-toggle`);
+  const checkbox = document.getElementById(elementId);
 
-            updateToggleUI(isBlue, 'blue-yellow', 'blue-yellow-toggle');
-        });
-    });
+  if (!toggle || !checkbox) return;
+
+  checkbox.checked = isEnabled;
+  if (isEnabled) {
+    toggle.classList.remove("bg-gray-500");
+    toggle.classList.add("bg-green-500");
+    toggle.querySelector("span").style.transform = "translateX(1.5rem)";
+  } else {
+    toggle.classList.remove("bg-green-500");
+    toggle.classList.add("bg-gray-500");
+    toggle.querySelector("span").style.transform = "translateX(0)";
+  }
 }
 
-function toggleAchromatopsia() {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        isAchromatopsic = !isAchromatopsic;
-        chrome.storage.sync.set({ [ACHROMATOPSIA_KEY]: isAchromatopsic }, () => {
-            console.log(`Achromatopsia mode set to: ${isAchromatopsic}`);
-            
-            chrome.tabs.sendMessage(tabs[0].id, {
-                action: 'achromatopsia',
-                isAchromatopsic
-            });
-            updateToggleUI(isAchromatopsic, 'achromatopsia', 'achromatopsia-toggle');
-        });
+// Toggle handlers
+function handleProtanopiaToggle(event) {
+  states.protanopia = event.target.checked;
+  // Disable other color blindness modes
+  if (states.protanopia) {
+    states.deuteranopia = false;
+    states.blueBlinds = false;
+    states.yellowBlinds = false;
+    updateToggleUI("deuteranopia", false);
+    updateToggleUI("blue-blindness", false);
+    updateToggleUI("yellow-blindness", false);
+  }
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      action: "protanopia",
+      isActive: states.protanopia,
     });
+  });
+
+  chrome.storage.sync.set({ [STORAGE_KEYS.PROTANOPIA]: states.protanopia });
+  updateToggleUI("protanopia", states.protanopia);
 }
 
-function toggleDyslexia() {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        isDyslexic = !isDyslexic;
-        chrome.storage.sync.set({ [DYSLEXIA_KEY]: isDyslexic }, () => {
-            console.log(`Dyslexia mode set to: ${isDyslexic}`);
-            
-            chrome.tabs.sendMessage(tabs[0].id, {
-                action: 'dyslexia',
-                isDyslexic
-            }, (response) => {
-                if (chrome.runtime.lastError) {
-                    console.error('Error sending message:', chrome.runtime.lastError);
-                } else {
-                    console.log('Message sent successfully');
-                }
-            });
+function handleDeuteranopiaToggle(event) {
+  states.deuteranopia = event.target.checked;
+  // Disable other color blindness modes
+  if (states.deuteranopia) {
+    states.protanopia = false;
+    states.blueBlinds = false;
+    states.yellowBlinds = false;
+    updateToggleUI("protanopia", false);
+    updateToggleUI("blue-blindness", false);
+    updateToggleUI("yellow-blindness", false);
+  }
 
-            updateToggleUI(isDyslexic, 'dyslexia', 'dyslexia-toggle');
-        });
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      action: "deuteranopia",
+      isActive: states.deuteranopia,
     });
+  });
+
+  chrome.storage.sync.set({ [STORAGE_KEYS.DEUTERANOPIA]: states.deuteranopia });
+  updateToggleUI("deuteranopia", states.deuteranopia);
 }
 
-function updateToggleUI(isEnabled, elementId, toggleId) {
-    const toggle = document.getElementById(toggleId);
-    const checkbox = document.getElementById(elementId);
+function handleBlueBlindnessToggle(event) {
+  states.blueBlinds = event.target.checked;
+  // Disable other color blindness modes
+  if (states.blueBlinds) {
+    states.protanopia = false;
+    states.deuteranopia = false;
+    states.yellowBlinds = false;
+    updateToggleUI("protanopia", false);
+    updateToggleUI("deuteranopia", false);
+    updateToggleUI("yellow-blindness", false);
+  }
 
-    if (!toggle || !checkbox) return;
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      action: "tritanopia",
+      isActive: states.blueBlinds,
+    });
+  });
 
-    if (isEnabled) {
-        console.log('Toggle UI')
-        toggle.classList.replace('bg-gray-500', 'bg-green-500');
-        toggle.querySelector('span').style.transform = 'translateX(1.5rem)';
-        checkbox.checked = true;
-    } else {
-        toggle.classList.replace('bg-green-500', 'bg-gray-500');
-        toggle.querySelector('span').style.transform = 'translateX(0)';
-        checkbox.checked = false;
+  chrome.storage.sync.set({ [STORAGE_KEYS.BLUE_BLINDNESS]: states.blueBlinds });
+  updateToggleUI("blue-blindness", states.blueBlinds);
+}
 
-        if (elementId === 'dyslexia') {
-            document.body.style.fontFamily = '';
-        }
-    }
+function handleYellowBlindnessToggle(event) {
+  states.yellowBlinds = event.target.checked;
+  // Disable other color blindness modes
+  if (states.yellowBlinds) {
+    states.protanopia = false;
+    states.deuteranopia = false;
+    states.blueBlinds = false;
+    updateToggleUI("protanopia", false);
+    updateToggleUI("deuteranopia", false);
+    updateToggleUI("blue-blindness", false);
+  }
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      action: "tritanomaly",
+      isActive: states.yellowBlinds,
+    });
+  });
+
+  chrome.storage.sync.set({
+    [STORAGE_KEYS.YELLOW_BLINDNESS]: states.yellowBlinds,
+  });
+  updateToggleUI("yellow-blindness", states.yellowBlinds);
+}
+
+function handleAchromatopsiaToggle(event) {
+  states.achromatopsia = event.target.checked;
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      action: "achromatopsia",
+      isAchromatopsic: states.achromatopsia,
+    });
+  });
+
+  chrome.storage.sync.set({
+    [STORAGE_KEYS.ACHROMATOPSIA]: states.achromatopsia,
+  });
+  updateToggleUI("achromatopsia", states.achromatopsia);
+}
+
+function handleDyslexiaToggle(event) {
+  states.dyslexia = event.target.checked;
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      action: "dyslexia",
+      isDyslexic: states.dyslexia,
+    });
+  });
+
+  chrome.storage.sync.set({ [STORAGE_KEYS.DYSLEXIA]: states.dyslexia });
+  updateToggleUI("dyslexia", states.dyslexia);
 }

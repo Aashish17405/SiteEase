@@ -17,40 +17,92 @@
 
         /* Moving the circle on toggle */
         input[type="checkbox"]:checked + label span {
-            transform: translateX(1.5rem); /* Move circle to the right */
+            transform: translateX(1.5rem);
         }
 
         /* Smooth transition for the circle */
         label span {
             transition: transform 0.3s ease;
         }
+
+        /* Custom toggle colors for different types of colorblindness */
+        #protanopia:checked + label {
+            background-color: #0066FF; /* Blue - visible to those with red blindness */
+        }
+
+        #deuteranopia:checked + label {
+            background-color: #FFB800; /* Yellow - visible to those with green blindness */
+        }
+
+        #blue-blindness:checked + label {
+            background-color: #FF4D4D; /* Red - visible to those with blue blindness */
+        }
+
+        #yellow-blindness:checked + label {
+            background-color: #9933FF; /* Purple - visible to those with yellow blindness */
+        }
+
+        #achromatopsia:checked + label {
+            background-color: #000000; /* Black - visible in grayscale */
+        }
+
+        #dyslexia:checked + label {
+            background-color: #00CC66; /* Green - high contrast */
+        }
+
+        /* Default unchecked state */
+        label[id$="-toggle"] {
+            background-color: #9CA3AF; /* gray-500 in Tailwind */
+        }
     </style>
 </head>
-<body class="bg-gray-900 flex items-center justify-center min-h-screen">
-    <div class="p-6 bg-gray-100 text-gray-900">
+<body class="bg-gray-900 flex items-center justify-center min-h-screen w-80">
+    <div class="p-8 bg-gray-100 text-gray-900">
         <!-- Header -->
         <div class="flex items-center mb-6 ml-7 font-sans">
             <img src="icons/icon-48x48.png" alt="logo" class="w-10 h-10 rounded-lg mr-3 shadow-md">
             <h1 class="text-2xl font-bold tracking-wide text-green-700">Site Ease</h1>
         </div>        
         
-        <!-- Red-Green Blindness -->
+        <!-- Protanopia (Red Blindness) -->
         <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors">
-            <label for="red-green" class="text-sm font-medium">Red-Green Blindness</label>
+            <label for="protanopia" class="text-sm font-medium">Red Blindness (Protanopia)</label>
             <div class="ml-12">
-                <input type="checkbox" id="red-green" class="hidden">
-                <label for="red-green" id="red-green-toggle" class="w-12 h-6 bg-blue-500 rounded-full block relative cursor-pointer">
+                <input type="checkbox" id="protanopia" class="hidden">
+                <label for="protanopia" id="protanopia-toggle" class="w-12 h-6 bg-gray-500 rounded-full block relative cursor-pointer">
                     <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform"></span>
                 </label>
             </div>
         </div>
         
-        <!-- Blue-Yellow Blindness -->
+        <!-- Deuteranopia (Green Blindness) -->
         <div class="flex items-center justify-between bg-white p-2 mt-4 rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors">
-            <label for="blue-yellow" class="text-sm font-medium">Blue-Yellow Blindness</label>
+            <label for="deuteranopia" class="text-sm font-medium">Green Blindness (Deuteranopia)</label>
             <div class="ml-12">
-                <input type="checkbox" id="blue-yellow" class="hidden">
-                <label for="blue-yellow" id="blue-yellow-toggle" class="w-12 h-6 bg-red-500 rounded-full block relative cursor-pointer">
+                <input type="checkbox" id="deuteranopia" class="hidden">
+                <label for="deuteranopia" id="deuteranopia-toggle" class="w-12 h-6 bg-gray-500 rounded-full block relative cursor-pointer">
+                    <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform"></span>
+                </label>
+            </div>
+        </div>
+        
+        <!-- Blue Blindness (Tritanopia) -->
+        <div class="flex items-center justify-between bg-white p-2 mt-4 rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors">
+            <label for="blue-blindness" class="text-sm font-medium">Blue Blindness (Tritanopia)</label>
+            <div class="ml-12">
+                <input type="checkbox" id="blue-blindness" class="hidden">
+                <label for="blue-blindness" id="blue-blindness-toggle" class="w-12 h-6 bg-gray-500 rounded-full block relative cursor-pointer">
+                    <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform"></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Yellow Blindness (Tritanomaly) -->
+        <div class="flex items-center justify-between bg-white p-2 mt-4 rounded-lg border border-gray-300 hover:bg-gray-200 transition-colors">
+            <label for="yellow-blindness" class="text-sm font-medium">Yellow Blindness (Tritanomaly)</label>
+            <div class="ml-12">
+                <input type="checkbox" id="yellow-blindness" class="hidden">
+                <label for="yellow-blindness" id="yellow-blindness-toggle" class="w-12 h-6 bg-gray-500 rounded-full block relative cursor-pointer">
                     <span class="absolute left-1 top-1 w-4 h-4 bg-white rounded-full transition-transform"></span>
                 </label>
             </div>
@@ -83,8 +135,8 @@
             <a href="https://github.com/Aashish17405/SiteEase" 
                target="_blank" 
                rel="noopener noreferrer" 
-               class="flex items-center space-x-2 px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded-md transition-colors">
-                <i class="fa-brands fa-github"></i>
+               class="flex items-center space-x-2 px-3 py-1 bg-gray-100 border border-gray-300 hover:bg-gray-300 rounded-md transition-colors">
+                <img src="icons/github-logo.svg" alt="githubLogo">
             </a>
         </div>
     </div>
