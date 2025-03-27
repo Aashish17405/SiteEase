@@ -176,7 +176,7 @@ function handleYellowBlindnessToggle(event) {
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, {
-      action: "tritanomaly",
+      action: "tritanopia",
       isActive: states.yellowBlinds,
     });
   });
@@ -193,7 +193,7 @@ function handleAchromatopsiaToggle(event) {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, {
       action: "achromatopsia",
-      isAchromatopsic: states.achromatopsia,
+      isActive: states.achromatopsia,
     });
   });
 
