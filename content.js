@@ -20,18 +20,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     } else if (!request.isActive && isFilterApplied) {
       removeColorFilter();
     }
+    chrome.storage.sync.set({ isProtanopia: request.isActive }, () => {
+      console.log(`Saved isProtanopia state: ${request.isActive}`);
+    });
   } else if (request.action === "deuteranopia") {
     if (request.isActive && !isFilterApplied) {
       applyColorFilter("deuteranopia");
     } else if (!request.isActive && isFilterApplied) {
       removeColorFilter();
     }
+    chrome.storage.sync.set({ isDeuteranopia: request.isActive }, () => {
+      console.log(`Saved isDeuteranopia state: ${request.isActive}`);
+    });
   } else if (request.action === "tritanopia") {
     if (request.isActive && !isFilterApplied) {
       applyColorFilter("tritanopia");
     } else if (!request.isActive && isFilterApplied) {
       removeColorFilter();
     }
+    chrome.storage.sync.set({ isTritanopia: request.isActive }, () => {
+      console.log(`Saved isTritanopia state: ${request.isActive}`);
+    });
   } else if (request.action === "achromatopsia") {
     if (request.isActive && !isFilterApplied) {
       applyColorFilter("achromatopsia");
@@ -45,14 +54,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 // Load saved states from storage
-chrome.storage.sync.get(["isDyslexic", "isAchromatopsia"], (result) => {
-  if (result.isDyslexic) {
-    console.log("Applying saved Dyslexic state...");
-    applyColorFilter("dyslexia");
-  } else if (result.isAchromatopsia) {
-    console.log("Applying saved Achromatopsia state...");
-    applyColorFilter("achromatopsia");
-  }
+chrome.storage.sync.get(
+  ["isDyslexic", "isProtanopia", "isDeuteranopia", "isTritanopia", "isAchromatopsia"], 
+  (result) => {
+    console.log("Loading saved filter states...", result);
+    
+    if (result.isDyslexic) {
+      console.log("Applying saved Dyslexic state...");
+      applyColorFilter("dyslexia");
+    } else if (result.isProtanopia) {
+      console.log("Applying saved Protanopia state...");
+      applyColorFilter("protanopia");
+    } else if (result.isDeuteranopia) {
+      console.log("Applying saved Deuteranopia state...");
+      applyColorFilter("deuteranopia");
+    } else if (result.isTritanopia) {
+      console.log("Applying saved Tritanopia state...");
+      applyColorFilter("tritanopia");
+    } else if (result.isAchromatopsia) {
+      console.log("Applying saved Achromatopsia state...");
+      applyColorFilter("achromatopsia");
+    }
 });
 
 function applyColorFilter(type) {
