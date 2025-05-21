@@ -29,7 +29,7 @@
         }
     ],
     "web_accessible_resources": [{
-        "resources": ["fonts/*"],
+        "resources": ["fonts/OpenDyslexic-Regular.woff"],
         "matches": ["<all_urls>"]
     }],
     "content_security_policy": {

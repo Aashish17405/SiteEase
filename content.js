@@ -41,6 +41,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     chrome.storage.sync.set({ isTritanopia: request.isActive }, () => {
       console.log(`Saved isTritanopia state: ${request.isActive}`);
     });
+  } else if (request.action === "tritanomaly") {
+    if (request.isActive && !isFilterApplied) {
+      applyColorFilter("tritanomaly");
+    } else if (!request.isActive && isFilterApplied) {
+      removeColorFilter();
+    }
+    chrome.storage.sync.set({ isTritanomaly: request.isActive }, () => {
+      console.log(`Saved isTritanomaly state: ${request.isActive}`);
+    });
   } else if (request.action === "achromatopsia") {
     if (request.isActive && !isFilterApplied) {
       applyColorFilter("achromatopsia");
@@ -55,10 +64,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 // Load saved states from storage
 chrome.storage.sync.get(
-  ["isDyslexic", "isProtanopia", "isDeuteranopia", "isTritanopia", "isAchromatopsia"], 
+  [
+    "isDyslexic",
+    "isProtanopia",
+    "isDeuteranopia",
+    "isTritanopia",
+    "isTritanomaly",
+    "isAchromatopsia",
+  ],
   (result) => {
     console.log("Loading saved filter states...", result);
-    
+
     if (result.isDyslexic) {
       console.log("Applying saved Dyslexic state...");
       applyColorFilter("dyslexia");
@@ -71,11 +87,15 @@ chrome.storage.sync.get(
     } else if (result.isTritanopia) {
       console.log("Applying saved Tritanopia state...");
       applyColorFilter("tritanopia");
+    } else if (result.isTritanomaly) {
+      console.log("Applying saved Tritanomaly state...");
+      applyColorFilter("tritanomaly");
     } else if (result.isAchromatopsia) {
       console.log("Applying saved Achromatopsia state...");
       applyColorFilter("achromatopsia");
     }
-});
+  }
+);
 
 function applyColorFilter(type) {
   const filters = {
@@ -97,6 +117,12 @@ function applyColorFilter(type) {
       hue-rotate(60deg)
       brightness(1.1)
     `,
+    tritanomaly: `
+      contrast(1.15)
+      saturate(1.2)
+      hue-rotate(30deg)
+      brightness(1.05)
+    `,
     achromatopsia: `
       grayscale(1)
       contrast(2)
@@ -107,7 +133,7 @@ function applyColorFilter(type) {
       contrast(1.2)
       brightness(1.1)
       sepia(0.2)
-    `
+    `,
   };
 
   // Create and inject the filter style
@@ -120,12 +146,13 @@ function applyColorFilter(type) {
     document.head.appendChild(styleElement);
   }
 
-  // Apply the filter to the entire HTML document
-  styleElement.textContent = type === "dyslexia"
-    ? `
+  if (type === "dyslexia") {
+    const fontUrl = chrome.runtime.getURL("fonts/OpenDyslexic-Regular.woff");
+
+    styleElement.textContent = `
       @font-face {
         font-family: 'OpenDyslexic';
-        src: url('https://cdn.jsdelivr.net/npm/open-dyslexic@1.0.3/fonts/OpenDyslexic-Regular.woff2') format('woff2');
+        src: url('${fontUrl}') format('woff');
         font-weight: normal;
         font-style: normal;
       }
@@ -136,23 +163,16 @@ function applyColorFilter(type) {
       body, p, div, span, h1, h2, h3, h4, h5, h6, li, td, th, input, textarea {
         font-family: 'OpenDyslexic', Arial, sans-serif !important;
       }
-    `
-    : `
+    `;
+  } else {
+    styleElement.textContent = `
       html {
         filter: ${filters[type]} !important;
         -webkit-filter: ${filters[type]} !important;
       }
     `;
+  }
 
   isFilterApplied = true;
   console.log(`Applied ${type} filter`);
-}
-
-function removeColorFilter() {
-  const styleElement = document.getElementById("colorblind-filter");
-  if (styleElement) {
-    styleElement.remove();
-  }
-  isFilterApplied = false;
-  console.log("Removed color filter");
 }

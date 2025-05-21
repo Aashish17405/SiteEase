@@ -12,8 +12,8 @@ let states = {
 const STORAGE_KEYS = {
   PROTANOPIA: "isProtanopia",
   DEUTERANOPIA: "isDeuteranopia",
-  BLUE_BLINDNESS: "isBlueBlinds",
-  YELLOW_BLINDNESS: "isYellowBlinds",
+  BLUE_BLINDNESS: "isTritanopia",
+  YELLOW_BLINDNESS: "isTritanomaly",
   ACHROMATOPSIA: "isAchromatopsia",
   DYSLEXIA: "isDyslexic",
 };
@@ -100,9 +100,13 @@ function handleProtanopiaToggle(event) {
     states.deuteranopia = false;
     states.blueBlinds = false;
     states.yellowBlinds = false;
+    states.achromatopsia = false;
+    states.dyslexia = false;
     updateToggleUI("deuteranopia", false);
     updateToggleUI("blue-blindness", false);
     updateToggleUI("yellow-blindness", false);
+    updateToggleUI("achromatopsia", false);
+    updateToggleUI("dyslexia", false);
   }
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -123,9 +127,13 @@ function handleDeuteranopiaToggle(event) {
     states.protanopia = false;
     states.blueBlinds = false;
     states.yellowBlinds = false;
+    states.achromatopsia = false;
+    states.dyslexia = false;
     updateToggleUI("protanopia", false);
     updateToggleUI("blue-blindness", false);
     updateToggleUI("yellow-blindness", false);
+    updateToggleUI("achromatopsia", false);
+    updateToggleUI("dyslexia", false);
   }
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -146,9 +154,13 @@ function handleBlueBlindnessToggle(event) {
     states.protanopia = false;
     states.deuteranopia = false;
     states.yellowBlinds = false;
+    states.achromatopsia = false;
+    states.dyslexia = false;
     updateToggleUI("protanopia", false);
     updateToggleUI("deuteranopia", false);
     updateToggleUI("yellow-blindness", false);
+    updateToggleUI("achromatopsia", false);
+    updateToggleUI("dyslexia", false);
   }
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -169,14 +181,18 @@ function handleYellowBlindnessToggle(event) {
     states.protanopia = false;
     states.deuteranopia = false;
     states.blueBlinds = false;
+    states.achromatopsia = false;
+    states.dyslexia = false;
     updateToggleUI("protanopia", false);
     updateToggleUI("deuteranopia", false);
     updateToggleUI("blue-blindness", false);
+    updateToggleUI("achromatopsia", false);
+    updateToggleUI("dyslexia", false);
   }
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, {
-      action: "tritanopia",
+      action: "tritanomaly",
       isActive: states.yellowBlinds,
     });
   });
@@ -189,6 +205,20 @@ function handleYellowBlindnessToggle(event) {
 
 function handleAchromatopsiaToggle(event) {
   states.achromatopsia = event.target.checked;
+
+  // Disable other color blindness modes
+  if (states.achromatopsia) {
+    states.protanopia = false;
+    states.deuteranopia = false;
+    states.blueBlinds = false;
+    states.yellowBlinds = false;
+    states.dyslexia = false;
+    updateToggleUI("protanopia", false);
+    updateToggleUI("deuteranopia", false);
+    updateToggleUI("blue-blindness", false);
+    updateToggleUI("yellow-blindness", false);
+    updateToggleUI("dyslexia", false);
+  }
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, {
@@ -205,6 +235,20 @@ function handleAchromatopsiaToggle(event) {
 
 function handleDyslexiaToggle(event) {
   states.dyslexia = event.target.checked;
+
+  // Disable other color blindness modes
+  if (states.dyslexia) {
+    states.protanopia = false;
+    states.deuteranopia = false;
+    states.blueBlinds = false;
+    states.yellowBlinds = false;
+    states.achromatopsia = false;
+    updateToggleUI("protanopia", false);
+    updateToggleUI("deuteranopia", false);
+    updateToggleUI("blue-blindness", false);
+    updateToggleUI("yellow-blindness", false);
+    updateToggleUI("achromatopsia", false);
+  }
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     chrome.tabs.sendMessage(tabs[0].id, {
