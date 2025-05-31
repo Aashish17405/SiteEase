@@ -5,9 +5,7 @@
     "description": "Toggle text style on the webpage.",
     "permissions": [
         "storage",
-        "activeTab",
-        "tabs",
-        "scripting"
+        "activeTab"
     ],
     "icons": {
         "16": "icons/icon-32x32.png",
