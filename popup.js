@@ -158,6 +158,7 @@ function loadSavedStates() {
     states.yellowBlinds = result[STORAGE_KEYS.YELLOW_BLINDNESS] || false;
     states.achromatopsia = result[STORAGE_KEYS.ACHROMATOPSIA] || false;
     states.dyslexia = result[STORAGE_KEYS.DYSLEXIA] || false;
+    applyPopupDyslexiaFont();
 
     updateToggleUI("protanopia", states.protanopia);
     updateToggleUI("deuteranopia", states.deuteranopia);
@@ -258,6 +259,7 @@ function checkAndApplyRecommendation() {
 
         if (filterKey === "dyslexia") {
           states.dyslexia = true;
+          applyPopupDyslexiaFont();
           updateToggleUI("dyslexia", true);
           sendToActiveTab({ action: "dyslexia", isDyslexic: true });
           chrome.storage.sync.set({ [STORAGE_KEYS.DYSLEXIA]: true });
@@ -282,6 +284,10 @@ function updateToggleUI(elementId, isEnabled) {
   const checkbox = document.getElementById(elementId);
   if (!checkbox) return;
   checkbox.checked = isEnabled;
+}
+
+function applyPopupDyslexiaFont() {
+  document.body.classList.toggle("popup-dyslexia-font", Boolean(states.dyslexia));
 }
 
 // ── COLOUR-BLINDNESS HANDLERS ──────────────────────────────────────────────
@@ -408,6 +414,7 @@ function handleAchromatopsiaToggle(event) {
 
 function handleDyslexiaToggle(event) {
   states.dyslexia = event.target.checked;
+  applyPopupDyslexiaFont();
   sendToActiveTab({ action: "dyslexia", isDyslexic: states.dyslexia });
   chrome.storage.sync.set({ [STORAGE_KEYS.DYSLEXIA]: states.dyslexia });
 }

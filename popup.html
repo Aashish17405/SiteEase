@@ -6,6 +6,13 @@
     <title>SiteEase</title>
     <link rel="stylesheet" href="index.css" />
     <style>
+      @font-face {
+        font-family: "OpenDyslexic";
+        src: url("./fonts/OpenDyslexic-Regular.woff") format("woff");
+        font-style: normal;
+        font-weight: 400;
+      }
+
       /* ── Popup shell ─────────────────────────────────── */
       body {
         min-height: auto;
@@ -76,6 +83,15 @@
         font-size: 13px;
         font-weight: 500;
         color: #cbd5e1;
+      }
+
+      .toggle-label--dyslexia {
+        font-family: "OpenDyslexic", "Comic Sans MS", "Trebuchet MS", sans-serif;
+      }
+
+      body.popup-dyslexia-font,
+      body.popup-dyslexia-font * {
+        font-family: "OpenDyslexic", "Comic Sans MS", "Trebuchet MS", sans-serif !important;
       }
 
       /* Hidden checkbox trick */
@@ -402,7 +418,7 @@
     <!-- Dyslexia -->
     <label class="toggle-row" for="dyslexia">
       <input type="checkbox" id="dyslexia" />
-      <span class="toggle-label">📖 Dyslexia (OpenDyslexic Font)</span>
+      <span class="toggle-label toggle-label--dyslexia">📖 Dyslexia</span>
       <div class="pill"></div>
     </label>
 
@@ -534,3 +550,5 @@
     <script src="popup.js"></script>
   </body>
 </html>
+
+
