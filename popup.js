@@ -199,6 +199,75 @@ function loadSavedStates() {
       }
     }
     updateTextToSpeechSpeedDisplay();
+
+    // If no filter is active, check active tab's localStorage for a recommendation
+    const noFilterActive =
+      !states.protanopia &&
+      !states.deuteranopia &&
+      !states.blueBlinds &&
+      !states.yellowBlinds &&
+      !states.achromatopsia &&
+      !states.dyslexia;
+
+    if (noFilterActive) {
+      checkAndApplyRecommendation();
+    }
+  });
+}
+
+function checkAndApplyRecommendation() {
+  if (!chrome.scripting || typeof chrome.scripting.executeScript !== "function") return;
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    const tab = tabs && tabs[0];
+    if (!tab || typeof tab.id === "undefined") return;
+
+    chrome.scripting.executeScript(
+      {
+        target: { tabId: tab.id },
+        func: () => {
+          try {
+            const raw = window.localStorage.getItem("siteease_recommended_filter");
+            return raw ? JSON.parse(raw) : null;
+          } catch (_) {
+            return null;
+          }
+        },
+      },
+      (results) => {
+        if (chrome.runtime.lastError || !results || !results[0]) return;
+        const rec = results[0].result;
+        if (!rec || !rec.filter) return;
+
+        const filterKey = String(rec.filter).toLowerCase();
+        const FILTER_TO_STORAGE_KEY = {
+          protanopia: "isProtanopia",
+          deuteranopia: "isDeuteranopia",
+          tritanopia: "isTritanopia",
+          tritanomaly: "isTritanomaly",
+          achromatopsia: "isAchromatopsia",
+        };
+        const UI_MAP = {
+          protanopia: "protanopia",
+          deuteranopia: "deuteranopia",
+          tritanopia: "blue-blindness",
+          tritanomaly: "yellow-blindness",
+          achromatopsia: "achromatopsia",
+          dyslexia: "dyslexia",
+        };
+
+        if (filterKey === "dyslexia") {
+          states.dyslexia = true;
+          updateToggleUI("dyslexia", true);
+          sendToActiveTab({ action: "dyslexia", isDyslexic: true });
+          chrome.storage.sync.set({ [STORAGE_KEYS.DYSLEXIA]: true });
+        } else if (FILTER_TO_STORAGE_KEY[filterKey]) {
+          updateToggleUI(UI_MAP[filterKey], true);
+          sendToActiveTab({ action: filterKey, isActive: true });
+          chrome.storage.sync.set({ [FILTER_TO_STORAGE_KEY[filterKey]]: true });
+        }
+      }
+    );
   });
 }
 

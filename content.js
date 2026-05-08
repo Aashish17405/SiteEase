@@ -317,6 +317,39 @@ chrome.storage.sync.get(
     if (!Number.isNaN(savedRate)) {
       textToSpeechRate = normalizeTextToSpeechRate(savedRate);
     }
+
+    // Auto-apply recommendation from SiteEase website if no filter is active
+    const noFilterActive =
+      !result.isProtanopia &&
+      !result.isDeuteranopia &&
+      !result.isTritanopia &&
+      !result.isTritanomaly &&
+      !result.isAchromatopsia &&
+      !result.isDyslexic;
+
+    if (noFilterActive) {
+      try {
+        const raw = window.localStorage.getItem("siteease_recommended_filter");
+        if (raw) {
+          const rec = JSON.parse(raw);
+          const filterKey = String(rec.filter || "").toLowerCase();
+          const FILTER_TO_STORAGE_KEY = {
+            protanopia: "isProtanopia",
+            deuteranopia: "isDeuteranopia",
+            tritanopia: "isTritanopia",
+            tritanomaly: "isTritanomaly",
+            achromatopsia: "isAchromatopsia",
+          };
+          if (filterKey === "dyslexia") {
+            applyDyslexiaFilter();
+            chrome.storage.sync.set({ isDyslexic: true });
+          } else if (FILTER_TO_STORAGE_KEY[filterKey]) {
+            applyColorFilter(filterKey);
+            chrome.storage.sync.set({ [FILTER_TO_STORAGE_KEY[filterKey]]: true });
+          }
+        }
+      } catch (_) {}
+    }
   },
 );
 
