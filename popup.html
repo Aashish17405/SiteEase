@@ -1,267 +1,496 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SiteEase</title>
-  <link rel="stylesheet" href="index.css" />
-  <style>
-    /* ── Popup shell ─────────────────────────────────── */
-    body {
-      min-height: auto;
-      padding: 14px;
-      background: #0f172a;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SiteEase</title>
+    <link rel="stylesheet" href="index.css" />
+    <style>
+      /* ── Popup shell ─────────────────────────────────── */
+      body {
+        min-height: auto;
+        padding: 14px;
+        background: #0f172a;
+      }
 
-    /* ── Header ──────────────────────────────────────── */
-    .se-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 12px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid #1e293b;
-    }
+      /* ── Header ──────────────────────────────────────── */
+      .se-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #1e293b;
+      }
 
-    .se-header img {
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
-    }
+      .se-header img {
+        width: 34px;
+        height: 34px;
+        border-radius: 8px;
+      }
 
-    .se-header h1 {
-      font-size: 18px;
-      font-weight: 700;
-      color: #e2e8f0;
-      letter-spacing: -0.3px;
-    }
+      .se-header h1 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #e2e8f0;
+        letter-spacing: -0.3px;
+      }
 
-    .se-header h1 span {
-      color: #22c55e;
-    }
+      .se-header h1 span {
+        color: #22c55e;
+      }
 
-    .se-badge {
-      margin-left: auto;
-      font-size: 10px;
-      font-weight: 600;
-      background: #14532d;
-      color: #4ade80;
-      border-radius: 20px;
-      padding: 2px 8px;
-      letter-spacing: 0.04em;
-    }
+      .se-badge {
+        margin-left: auto;
+        font-size: 10px;
+        font-weight: 600;
+        background: #14532d;
+        color: #4ade80;
+        border-radius: 20px;
+        padding: 2px 8px;
+        letter-spacing: 0.04em;
+      }
 
-    /* ── Toggle rows (existing color toggles) ─────────── */
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 10px;
-      padding: 8px 12px;
-      margin-top: 6px;
-      transition: background 0.2s, border-color 0.2s;
-      cursor: pointer;
-    }
+      /* ── Toggle rows (existing color toggles) ─────────── */
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 10px;
+        padding: 8px 12px;
+        margin-top: 6px;
+        transition:
+          background 0.2s,
+          border-color 0.2s;
+        cursor: pointer;
+      }
 
-    .toggle-row:hover {
-      background: #243347;
-      border-color: #475569;
-    }
+      .toggle-row:hover {
+        background: #243347;
+        border-color: #475569;
+      }
 
-    .toggle-label {
-      font-size: 13px;
-      font-weight: 500;
-      color: #cbd5e1;
-    }
+      .toggle-label {
+        font-size: 13px;
+        font-weight: 500;
+        color: #cbd5e1;
+      }
 
-    /* Hidden checkbox trick */
-    .toggle-row input[type="checkbox"] {
-      display: none;
-    }
+      /* Hidden checkbox trick */
+      .toggle-row input[type="checkbox"] {
+        display: none;
+      }
 
-    /* The pill switch */
-    .pill {
-      width: 44px;
-      height: 24px;
-      border-radius: 12px;
-      background: #334155;
-      position: relative;
-      cursor: pointer;
-      transition: background 0.25s;
-      flex-shrink: 0;
-    }
+      /* The pill switch */
+      .pill {
+        width: 44px;
+        height: 24px;
+        border-radius: 12px;
+        background: #334155;
+        position: relative;
+        cursor: pointer;
+        transition: background 0.25s;
+        flex-shrink: 0;
+      }
 
-    .pill::after {
-      content: "";
-      position: absolute;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #94a3b8;
-      top: 3px;
-      left: 3px;
-      transition: transform 0.25s, background 0.25s;
-    }
+      .pill::after {
+        content: "";
+        position: absolute;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #94a3b8;
+        top: 3px;
+        left: 3px;
+        transition:
+          transform 0.25s,
+          background 0.25s;
+      }
 
-    /* Checked state colours per condition */
-    #protanopia:checked   ~ .pill { background: #2563eb; }
-    #deuteranopia:checked ~ .pill { background: #d97706; }
-    #blue-blindness:checked  ~ .pill { background: #dc2626; }
-    #yellow-blindness:checked ~ .pill { background: #7c3aed; }
-    #achromatopsia:checked ~ .pill { background: #475569; }
-    #dyslexia:checked     ~ .pill { background: #16a34a; }
+      /* Checked state colours per condition */
+      #protanopia:checked ~ .pill {
+        background: #2563eb;
+      }
+      #deuteranopia:checked ~ .pill {
+        background: #d97706;
+      }
+      #blue-blindness:checked ~ .pill {
+        background: #dc2626;
+      }
+      #yellow-blindness:checked ~ .pill {
+        background: #7c3aed;
+      }
+      #achromatopsia:checked ~ .pill {
+        background: #475569;
+      }
+      #dyslexia:checked ~ .pill {
+        background: #16a34a;
+      }
+      #text-to-speech:checked ~ .pill {
+        background: #0891b2;
+      }
 
-    input[type="checkbox"]:checked ~ .pill::after {
-      transform: translateX(20px);
-      background: #fff;
-    }
+      input[type="checkbox"]:checked ~ .pill::after {
+        transform: translateX(20px);
+        background: #fff;
+      }
 
-    /* ── GitHub link row ──────────────────────────────── */
-    .github-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 10px;
-      padding: 8px 12px;
-      margin-top: 6px;
-    }
+      /* ── GitHub link row ──────────────────────────────── */
+      .github-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 10px;
+        padding: 8px 12px;
+        margin-top: 6px;
+      }
 
-    .github-row span {
-      font-size: 12px;
-      color: #64748b;
-    }
+      .github-row span {
+        font-size: 12px;
+        color: #64748b;
+      }
 
-    .github-row a {
-      display: flex;
-      align-items: center;
-      background: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 7px;
-      padding: 4px 8px;
-      transition: background 0.15s, border-color 0.15s;
-    }
+      .github-row a {
+        display: flex;
+        align-items: center;
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 7px;
+        padding: 4px 8px;
+        transition:
+          background 0.15s,
+          border-color 0.15s;
+      }
 
-    .github-row a:hover {
-      background: #334155;
-      border-color: #64748b;
-    }
+      .github-row a:hover {
+        background: #334155;
+        border-color: #64748b;
+      }
 
-    .github-row img {
-      width: 18px;
-      height: 18px;
-      filter: invert(1) brightness(0.75);
-    }
-  </style>
-</head>
+      .github-row img {
+        width: 18px;
+        height: 18px;
+        filter: invert(1) brightness(0.75);
+      }
 
-<body>
+      /* ── Dictionary panel ────────────────────────────── */
+      .dictionary-card {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        padding: 12px;
+        margin-top: 6px;
+        display: grid;
+        gap: 10px;
+      }
 
-  <!-- ── HEADER ─────────────────────────────────────── -->
-  <div class="se-header">
-    <img src="icons/icon-48x48.png" alt="SiteEase logo" />
-    <h1>Site<span>Ease</span></h1>
-    <div class="se-badge">v1.3</div>
-  </div>
+      .dictionary-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
 
-  <!-- ══════════════════════════════════════════════════
+      .dictionary-input {
+        flex: 1 1 140px;
+        min-width: 0;
+        background: #0f172a;
+        border: 1px solid #334155;
+        color: #e2e8f0;
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 13px;
+        outline: none;
+      }
+
+      .dictionary-input:focus {
+        border-color: #38bdf8;
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+      }
+
+      .dict-btn {
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 8px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition:
+          transform 0.15s,
+          background 0.15s,
+          border-color 0.15s;
+      }
+
+      .dict-btn:hover {
+        transform: translateY(-1px);
+      }
+
+      .dict-btn.primary {
+        background: #0f766e;
+        color: #ecfeff;
+      }
+
+      .dict-btn.primary:hover {
+        background: #115e59;
+        border-color: #14b8a6;
+      }
+
+      .dict-btn.secondary {
+        background: #0f172a;
+        color: #cbd5e1;
+      }
+
+      .dict-btn.secondary:hover {
+        background: #1e293b;
+        border-color: #475569;
+      }
+
+      .dictionary-status {
+        font-size: 12px;
+        color: #94a3b8;
+        line-height: 1.45;
+      }
+
+      .dictionary-result {
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 10px;
+        padding: 10px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .dictionary-result.hidden {
+        display: none;
+      }
+
+      .dictionary-headword {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .dictionary-word {
+        font-size: 16px;
+        font-weight: 700;
+        color: #f8fafc;
+        word-break: break-word;
+      }
+
+      .dictionary-phonetic {
+        font-size: 12px;
+        color: #38bdf8;
+      }
+
+      .dictionary-pos {
+        font-size: 12px;
+        font-weight: 700;
+        color: #4ade80;
+        text-transform: capitalize;
+      }
+
+      .dictionary-definition {
+        font-size: 12px;
+        color: #cbd5e1;
+        line-height: 1.55;
+      }
+
+      .dictionary-error {
+        color: #fda4af;
+      }
+
+      .tts-speed-row {
+        background: #1e293b;
+        border: 1px solid #334155;
+        border-radius: 10px;
+        padding: 8px 12px;
+        margin-top: 6px;
+      }
+
+      .tts-speed-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 6px;
+      }
+
+      .tts-speed-label {
+        font-size: 12px;
+        color: #cbd5e1;
+        font-weight: 500;
+      }
+
+      .tts-speed-value {
+        font-size: 12px;
+        color: #38bdf8;
+        font-weight: 700;
+      }
+
+      .tts-speed-slider {
+        width: 100%;
+        accent-color: #0891b2;
+      }
+
+      .tts-preview-btn {
+        margin-top: 8px;
+        width: 100%;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        background: #0f172a;
+        color: #cbd5e1;
+        padding: 7px 10px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- ── HEADER ─────────────────────────────────────── -->
+    <div class="se-header">
+      <img src="icons/icon-48x48.png" alt="SiteEase logo" />
+      <h1>Site<span>Ease</span></h1>
+      <!-- <div class="se-badge">v1.3</div> -->
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
        SECTION 1 — VISION FILTERS
   ═══════════════════════════════════════════════════ -->
-  <div class="section-label">Vision Filters</div>
+    <div class="section-label">Vision Filters</div>
 
-  <!-- Protanopia -->
-  <label class="toggle-row" for="protanopia">
-    <input type="checkbox" id="protanopia" />
-    <span class="toggle-label">🔴 Red Blindness (Protanopia)</span>
-    <div class="pill"></div>
-  </label>
+    <!-- Protanopia -->
+    <label class="toggle-row" for="protanopia">
+      <input type="checkbox" id="protanopia" />
+      <span class="toggle-label">🔴 Red Blindness (Protanopia)</span>
+      <div class="pill"></div>
+    </label>
 
-  <!-- Deuteranopia -->
-  <label class="toggle-row" for="deuteranopia">
-    <input type="checkbox" id="deuteranopia" />
-    <span class="toggle-label">🟢 Green Blindness (Deuteranopia)</span>
-    <div class="pill"></div>
-  </label>
+    <!-- Deuteranopia -->
+    <label class="toggle-row" for="deuteranopia">
+      <input type="checkbox" id="deuteranopia" />
+      <span class="toggle-label">🟢 Green Blindness (Deuteranopia)</span>
+      <div class="pill"></div>
+    </label>
 
-  <!-- Tritanopia -->
-  <label class="toggle-row" for="blue-blindness">
-    <input type="checkbox" id="blue-blindness" />
-    <span class="toggle-label">🔵 Blue Blindness (Tritanopia)</span>
-    <div class="pill"></div>
-  </label>
+    <!-- Tritanopia -->
+    <label class="toggle-row" for="blue-blindness">
+      <input type="checkbox" id="blue-blindness" />
+      <span class="toggle-label">🔵 Blue Blindness (Tritanopia)</span>
+      <div class="pill"></div>
+    </label>
 
-  <!-- Tritanomaly -->
-  <label class="toggle-row" for="yellow-blindness">
-    <input type="checkbox" id="yellow-blindness" />
-    <span class="toggle-label">🟡 Yellow Blindness (Tritanomaly)</span>
-    <div class="pill"></div>
-  </label>
+    <!-- Tritanomaly -->
+    <label class="toggle-row" for="yellow-blindness">
+      <input type="checkbox" id="yellow-blindness" />
+      <span class="toggle-label">🟡 Yellow Blindness (Tritanomaly)</span>
+      <div class="pill"></div>
+    </label>
 
-  <!-- Achromatopsia -->
-  <label class="toggle-row" for="achromatopsia">
-    <input type="checkbox" id="achromatopsia" />
-    <span class="toggle-label">⬛ Achromatopsia</span>
-    <div class="pill"></div>
-  </label>
+    <!-- Achromatopsia -->
+    <label class="toggle-row" for="achromatopsia">
+      <input type="checkbox" id="achromatopsia" />
+      <span class="toggle-label">⬛ Achromatopsia</span>
+      <div class="pill"></div>
+    </label>
 
-  <!-- Dyslexia -->
-  <label class="toggle-row" for="dyslexia">
-    <input type="checkbox" id="dyslexia" />
-    <span class="toggle-label">📖 Dyslexia (OpenDyslexic Font)</span>
-    <div class="pill"></div>
-  </label>
+    <!-- Dyslexia -->
+    <label class="toggle-row" for="dyslexia">
+      <input type="checkbox" id="dyslexia" />
+      <span class="toggle-label">📖 Dyslexia (OpenDyslexic Font)</span>
+      <div class="pill"></div>
+    </label>
 
-  <!-- ══════════════════════════════════════════════════
+    <!-- Text to Speech -->
+    <label class="toggle-row" for="text-to-speech">
+      <input type="checkbox" id="text-to-speech" />
+      <span class="toggle-label">🔊 Read Highlighted Text</span>
+      <div class="pill"></div>
+    </label>
+    <div class="tts-speed-row">
+      <div class="tts-speed-head">
+        <span class="tts-speed-label">Speech Speed</span>
+        <span class="tts-speed-value" id="tts-speed-value">1.00x</span>
+      </div>
+      <input
+        class="tts-speed-slider"
+        id="tts-speed"
+        type="range"
+        min="0.5"
+        max="2"
+        step="0.05"
+        value="1"
+      />
+    </div>
+
+    <!-- ══════════════════════════════════════════════════
        SECTION 2 — FONT SIZE
   ═══════════════════════════════════════════════════ -->
-  <div class="section-label">Font Size</div>
+    <div class="section-label">Font Size</div>
 
-  <div class="feature-row">
-    <span class="feature-row-label">🔤 Text Size</span>
-    <div class="stepper">
-      <button class="stepper-btn" id="font-dec" title="Decrease font size">−</button>
-      <span class="stepper-value" id="font-size-display">16px</span>
-      <button class="stepper-btn" id="font-inc" title="Increase font size">+</button>
-      <button class="btn-reset" id="font-reset" title="Reset to default">Reset</button>
+    <div class="feature-row">
+      <span class="feature-row-label">🔤 Text Size</span>
+      <div class="stepper">
+        <button class="stepper-btn" id="font-dec" title="Decrease font size">
+          −
+        </button>
+        <input
+          class="stepper-value stepper-input"
+          id="font-size-display"
+          type="text"
+          inputmode="numeric"
+          aria-label="Text size"
+          value="16px"
+        />
+        <button class="stepper-btn" id="font-inc" title="Increase font size">
+          +
+        </button>
+        <button class="btn-reset" id="font-reset" title="Reset to default">
+          Reset
+        </button>
+      </div>
     </div>
-  </div>
 
-  <!-- ══════════════════════════════════════════════════
+    <!-- ══════════════════════════════════════════════════
        SECTION 3 — PAGE MAGNIFIER
   ═══════════════════════════════════════════════════ -->
-  <div class="section-label">Page Magnifier</div>
+    <div class="section-label">Page Magnifier</div>
 
-  <div class="feature-row">
-    <span class="feature-row-label">🔍 Zoom Level</span>
-    <div class="stepper">
-      <button class="stepper-btn" id="zoom-dec" title="Zoom out">−</button>
-      <span class="stepper-value" id="zoom-display">100%</span>
-      <button class="stepper-btn" id="zoom-inc" title="Zoom in">+</button>
-      <button class="btn-reset" id="zoom-reset" title="Reset zoom">Reset</button>
+    <div class="feature-row">
+      <span class="feature-row-label">🔍 Zoom Level</span>
+      <div class="stepper">
+        <button class="stepper-btn" id="zoom-dec" title="Zoom out">−</button>
+        <span class="stepper-value" id="zoom-display">100%</span>
+        <button class="stepper-btn" id="zoom-inc" title="Zoom in">+</button>
+        <button class="btn-reset" id="zoom-reset" title="Reset zoom">
+          Reset
+        </button>
+      </div>
     </div>
-  </div>
 
-  <!-- ══════════════════════════════════════════════════
+    <!-- ══════════════════════════════════════════════════
        SECTION 4 — IMAGE REMOVER
   ═══════════════════════════════════════════════════ -->
-  <div class="section-label">Images</div>
+    <div class="section-label">Images</div>
 
-  <div class="feature-row">
-    <span class="feature-row-label">🖼️ Page Images</span>
-    <div style="display:flex;align-items:center;gap:6px;">
-      <span class="img-status" id="img-status">Visible</span>
-      <button class="btn-img-toggle hide" id="btn-hide-images">Hide</button>
-      <button class="btn-img-toggle show" id="btn-show-images">Show</button>
+    <div class="feature-row">
+      <span class="feature-row-label">🖼️ Page Images</span>
+      <div style="display: flex; align-items: center; gap: 6px">
+        <span class="img-status" id="img-status">Visible</span>
+        <button class="btn-img-toggle hide" id="btn-hide-images">Hide</button>
+        <button class="btn-img-toggle show" id="btn-show-images">Show</button>
+      </div>
     </div>
-  </div>
 
-  <!-- ══════════════════════════════════════════════════
+    <!-- ══════════════════════════════════════════════════
        CONTRIBUTE
   ═══════════════════════════════════════════════════ -->
-  <div class="section-label">About</div>
+    <!-- <div class="section-label">About</div>
   <div class="github-row">
     <span>Contribute to SiteEase</span>
     <a href="https://github.com/Aashish17405/SiteEase"
@@ -269,8 +498,39 @@
        rel="noopener noreferrer">
       <img src="icons/github-logo.svg" alt="GitHub" />
     </a>
-  </div>
+  </div> -->
 
-  <script src="popup.js"></script>
-</body>
+    <!-- ══════════════════════════════════════════════════
+       DICTIONARY
+  ═══════════════════════════════════════════════════ -->
+    <div class="section-label">Dictionary</div>
+    <div class="dictionary-card">
+      <div class="dictionary-row">
+        <input
+          class="dictionary-input"
+          id="dictionary-input"
+          type="text"
+          placeholder="Highlight a word or paste text"
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button
+          class="dict-btn secondary"
+          id="dictionary-use-selection"
+          type="button"
+        >
+          Use highlight
+        </button>
+        <button class="dict-btn primary" id="dictionary-lookup" type="button">
+          Define
+        </button>
+      </div>
+      <div class="dictionary-status" id="dictionary-status">
+        Select text on the page, then open the popup to see its meaning.
+      </div>
+      <div class="dictionary-result hidden" id="dictionary-result"></div>
+    </div>
+
+    <script src="popup.js"></script>
+  </body>
 </html>
