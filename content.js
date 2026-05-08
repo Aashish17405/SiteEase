@@ -3,6 +3,11 @@ let isColorFilterApplied = false;
 let isDyslexiaApplied = false;
 let currentColorFilter = null;
 
+// ── NEW FEATURE STATE ──────────────────────────────────
+let currentFontSize = null;   // e.g. "18px"
+let currentZoom    = null;   // e.g. "120%"
+let imagesHidden   = false;
+
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // console.log("Received request:", request);
 
@@ -60,6 +65,34 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 
     chrome.storage.sync.set({ isAchromatopsia: request.isActive });
+
+  // ── FONT SIZE ──────────────────────────────────────────
+  } else if (request.action === "fontSize") {
+    applyFontSize(request.fontSize);
+    chrome.storage.sync.set({ seFontSize: request.fontSize });
+
+  // ── PAGE MAGNIFIER / ZOOM ──────────────────────────────
+  } else if (request.action === "zoomPage") {
+    const zoom = request.zoomValue;
+    document.body.style.zoom = zoom;
+    currentZoom = zoom;
+    chrome.storage.sync.set({ seZoom: zoom });
+
+  // ── IMAGE HIDE ──────────────────────────────────────────
+  } else if (request.action === "image") {
+    document.querySelectorAll("img").forEach(img => {
+      img.style.setProperty("display", "none", "important");
+    });
+    imagesHidden = true;
+    chrome.storage.sync.set({ seImagesHidden: true });
+
+  // ── IMAGE SHOW ──────────────────────────────────────────
+  } else if (request.action === "imageAdd") {
+    document.querySelectorAll("img").forEach(img => {
+      img.style.removeProperty("display");
+    });
+    imagesHidden = false;
+    chrome.storage.sync.set({ seImagesHidden: false });
   }
 });
 
@@ -72,31 +105,45 @@ chrome.storage.sync.get(
     "isTritanopia",
     "isTritanomaly",
     "isAchromatopsia",
+    "seFontSize",
+    "seZoom",
+    "seImagesHidden",
   ],
   (result) => {
-    // console.log("Loading saved filter states...", result);
-
     // Apply dyslexia filter if enabled
     if (result.isDyslexic) {
-      // console.log("Applying saved Dyslexic state...");
       applyDyslexiaFilter();
     }
 
     if (result.isProtanopia) {
-      // console.log("Applying saved Protanopia state...");
       applyColorFilter("protanopia");
     } else if (result.isDeuteranopia) {
-      // console.log("Applying saved Deuteranopia state...");
       applyColorFilter("deuteranopia");
     } else if (result.isTritanopia) {
-      // console.log("Applying saved Tritanopia state...");
       applyColorFilter("tritanopia");
     } else if (result.isTritanomaly) {
-      // console.log("Applying saved Tritanomaly state...");
       applyColorFilter("tritanomaly");
     } else if (result.isAchromatopsia) {
-      // console.log("Applying saved Achromatopsia state...");
       applyColorFilter("achromatopsia");
+    }
+
+    // ── Restore font size ──────────────────────────────
+    if (result.seFontSize && result.seFontSize !== "16px") {
+      applyFontSize(result.seFontSize);
+    }
+
+    // ── Restore zoom ───────────────────────────────────
+    if (result.seZoom && result.seZoom !== "100%") {
+      document.body.style.zoom = result.seZoom;
+      currentZoom = result.seZoom;
+    }
+
+    // ── Restore images hidden ──────────────────────────
+    if (result.seImagesHidden) {
+      document.querySelectorAll("img").forEach(img => {
+        img.style.setProperty("display", "none", "important");
+      });
+      imagesHidden = true;
     }
   }
 );
@@ -211,4 +258,35 @@ function removeDyslexiaFilter() {
   }
   isDyslexiaApplied = false;
   // console.log("Removed dyslexia filter");
+}
+
+function applyFontSize(size) {
+  let styleId = "siteease-font-size-filter";
+  let styleEl = document.getElementById(styleId);
+
+  // If size is 16px, we consider it "reset" to avoid overriding default site styles
+  if (size === "16px") {
+    if (styleEl) styleEl.parentNode.removeChild(styleEl);
+    currentFontSize = null;
+    return;
+  }
+
+  if (!styleEl) {
+    styleEl = document.createElement("style");
+    styleEl.id = styleId;
+    document.head.appendChild(styleEl);
+  }
+  
+  styleEl.textContent = `
+    html, body, p, a, span, div, li, td, th, input, textarea, button {
+      font-size: ${size} !important;
+      line-height: 1.5 !important;
+    }
+    h1 { font-size: calc(${size} * 2.0) !important; line-height: 1.2 !important; }
+    h2 { font-size: calc(${size} * 1.75) !important; line-height: 1.2 !important; }
+    h3 { font-size: calc(${size} * 1.5) !important; line-height: 1.2 !important; }
+    h4 { font-size: calc(${size} * 1.25) !important; line-height: 1.2 !important; }
+    h5, h6 { font-size: calc(${size} * 1.1) !important; line-height: 1.2 !important; }
+  `;
+  currentFontSize = size;
 }

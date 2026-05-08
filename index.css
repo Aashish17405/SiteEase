@@ -1,36 +1,164 @@
-.container{
-    width: 100%;
-    height: 15vh;
-    background-color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* ── Base ─────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
-.button{
-    background-color: #d2d2d2;
-    width: 50px;
-    height: 25px;
-    border-radius: 200px;
-    cursor: pointer;
-    position: relative;
-    transition: 0.2s;
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  width: 320px;
+  background: #0f172a;
+  color: #e2e8f0;
 }
-.button::before{
-    position: absolute;
-    content: '';
-    background-color: #fff;
-    width: 22.5px;
-    height: 22.5px;
-    border-radius: 100px;
-    margin: 1.2px;
-    transition: 0.2s;
+
+/* ── Section Divider Label ───────────────────────────── */
+.section-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #64748b;
+  padding: 10px 0 4px 2px;
+  border-top: 1px solid #1e293b;
+  margin-top: 8px;
 }
-input:checked + .button{
-    background-color: #20096d;
+
+.section-label:first-child {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 2px;
 }
-input:checked + .button::before{
-    transform: translateX(25px);
+
+/* ── Feature Row Wrapper ─────────────────────────────── */
+.feature-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-top: 6px;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
-input{
-    display: none;
+
+.feature-row:hover {
+  background: #243347;
+  border-color: #475569;
+}
+
+.feature-row-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #cbd5e1;
+  flex: 1;
+}
+
+/* ── Stepper Controls (+/− with value display) ───────── */
+.stepper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.stepper-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid #475569;
+  background: #0f172a;
+  color: #94a3b8;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  line-height: 1;
+}
+
+.stepper-btn:hover {
+  background: #334155;
+  color: #e2e8f0;
+  border-color: #64748b;
+}
+
+.stepper-btn:active {
+  background: #4f46e5;
+  border-color: #4f46e5;
+  color: #fff;
+}
+
+.stepper-value {
+  min-width: 42px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: #e2e8f0;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 3px 4px;
+}
+
+/* ── Reset / Small Utility Button ────────────────────── */
+.btn-reset {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  background: transparent;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  margin-left: 4px;
+}
+
+.btn-reset:hover {
+  background: #334155;
+  color: #e2e8f0;
+  border-color: #64748b;
+}
+
+/* ── Image Toggle Button ─────────────────────────────── */
+.btn-img-toggle {
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: none;
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+  white-space: nowrap;
+}
+
+.btn-img-toggle.hide {
+  background: #ef4444;
+  color: #fff;
+}
+
+.btn-img-toggle.show {
+  background: #22c55e;
+  color: #fff;
+}
+
+.btn-img-toggle:hover {
+  filter: brightness(1.15);
+  transform: scale(1.03);
+}
+
+/* ── Images state indicator ──────────────────────────── */
+.img-status {
+  font-size: 11px;
+  color: #64748b;
+  margin-left: 6px;
+}
+
+.img-status.hidden-state {
+  color: #f87171;
 }
