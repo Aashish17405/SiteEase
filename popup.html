@@ -47,6 +47,24 @@
         color: #22c55e;
       }
 
+      .theme-toggle {
+        margin-left: auto;
+        width: 30px;
+        height: 30px;
+        border-radius: 8px;
+        border: 1px solid #334155;
+        background: #111827;
+        color: #cbd5e1;
+        font-size: 14px;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .theme-toggle:hover {
+        background: #1f2937;
+        border-color: #475569;
+      }
+
       .se-badge {
         margin-left: auto;
         font-size: 10px;
@@ -364,6 +382,76 @@
         font-weight: 600;
         cursor: pointer;
       }
+
+      body.theme-light {
+        background: #f8fafc;
+        color: #0f172a;
+      }
+
+      body.theme-light .se-header {
+        border-bottom-color: #cbd5e1;
+      }
+
+      body.theme-light .se-header h1 {
+        color: #0f172a;
+      }
+
+      body.theme-light .toggle-row,
+      body.theme-light .feature-row,
+      body.theme-light .dictionary-card,
+      body.theme-light .tts-speed-row {
+        background: #ffffff;
+        border-color: #cbd5e1;
+      }
+
+      body.theme-light .toggle-row:hover,
+      body.theme-light .feature-row:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+      }
+
+      body.theme-light .toggle-label,
+      body.theme-light .feature-row-label,
+      body.theme-light .tts-speed-label,
+      body.theme-light .dictionary-status,
+      body.theme-light .stepper-value {
+        color: #1e293b;
+      }
+
+      body.theme-light .section-label,
+      body.theme-light .img-status {
+        color: #475569;
+      }
+
+      body.theme-light .dictionary-input,
+      body.theme-light .dictionary-result,
+      body.theme-light .stepper-btn,
+      body.theme-light .stepper-value,
+      body.theme-light .btn-reset,
+      body.theme-light .tts-preview-btn {
+        background: #f8fafc;
+        border-color: #cbd5e1;
+        color: #1e293b;
+      }
+
+      body.theme-light .dictionary-word {
+        color: #0f172a;
+      }
+
+      body.theme-light .dictionary-definition {
+        color: #334155;
+      }
+
+      body.theme-light .theme-toggle {
+        background: #ffffff;
+        border-color: #cbd5e1;
+        color: #0f172a;
+      }
+
+      body.theme-light .theme-toggle:hover {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+      }
     </style>
   </head>
 
@@ -372,6 +460,7 @@
     <div class="se-header">
       <img src="icons/icon-48x48.png" alt="SiteEase logo" />
       <h1>Site<span>Ease</span></h1>
+      <button id="theme-toggle" class="theme-toggle" type="button" aria-label="Switch to light theme">☀</button>
       <!-- <div class="se-badge">v1.3</div> -->
     </div>
 

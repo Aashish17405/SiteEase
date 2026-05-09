@@ -14,6 +14,7 @@ let states = {
   dictionaryLoading: false,
   textToSpeech: false,
   textToSpeechRate: 1,
+  theme: "dark",
 };
 
 // ── STORAGE KEYS ──────────────────────────────────────────────────────────
@@ -30,6 +31,7 @@ const STORAGE_KEYS = {
   IMAGES_HIDDEN: "seImagesHidden",
   TEXT_TO_SPEECH: "seTextToSpeech",
   TEXT_TO_SPEECH_RATE: "seTextToSpeechRate",
+  THEME: "sePopupTheme",
 };
 
 // ── FONT SIZE CONFIG ───────────────────────────────────────────────────────
@@ -44,7 +46,9 @@ const ZOOM_STEP = 10; // %
 
 // ── INIT ───────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
+  window.scrollTo(0, 0);
   loadSavedStates();
+  setupThemeToggle();
 
   // Colour-blindness toggles
   setupToggle("protanopia", handleProtanopiaToggle);
@@ -151,6 +155,10 @@ document.addEventListener("DOMContentLoaded", () => {
 // ── LOAD SAVED STATES ──────────────────────────────────────────────────────
 function loadSavedStates() {
   chrome.storage.sync.get(Object.values(STORAGE_KEYS), (result) => {
+    const savedTheme = result[STORAGE_KEYS.THEME];
+    states.theme = savedTheme === "light" ? "light" : "dark";
+    applyPopupTheme();
+
     // Colour toggles
     states.protanopia = result[STORAGE_KEYS.PROTANOPIA] || false;
     states.deuteranopia = result[STORAGE_KEYS.DEUTERANOPIA] || false;
@@ -284,6 +292,30 @@ function updateToggleUI(elementId, isEnabled) {
   const checkbox = document.getElementById(elementId);
   if (!checkbox) return;
   checkbox.checked = isEnabled;
+}
+
+function setupThemeToggle() {
+  const themeToggle = document.getElementById("theme-toggle");
+  if (!themeToggle) return;
+  themeToggle.addEventListener("click", () => {
+    states.theme = states.theme === "dark" ? "light" : "dark";
+    applyPopupTheme();
+    chrome.storage.sync.set({ [STORAGE_KEYS.THEME]: states.theme });
+  });
+}
+
+function applyPopupTheme() {
+  const isLightTheme = states.theme === "light";
+  document.body.classList.toggle("theme-light", isLightTheme);
+
+  const themeToggle = document.getElementById("theme-toggle");
+  if (!themeToggle) return;
+
+  themeToggle.textContent = isLightTheme ? "🌙" : "☀";
+  themeToggle.setAttribute(
+    "aria-label",
+    isLightTheme ? "Switch to dark theme" : "Switch to light theme",
+  );
 }
 
 function applyPopupDyslexiaFont() {
@@ -679,7 +711,8 @@ function loadSelectionIntoDictionary(autoLookup = false) {
           setDictionaryStatus(
             "No highlighted text found. Highlight a word on the page or paste one below.",
           );
-          if (inputEl && !inputEl.value.trim()) {
+          // Avoid auto-scrolling popup to the dictionary on initial open.
+          if (autoLookup && inputEl && !inputEl.value.trim()) {
             inputEl.focus();
           }
         },

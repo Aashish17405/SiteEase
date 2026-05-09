@@ -382,10 +382,11 @@ function normalizeTextToSpeechRate(rate) {
 // Color filters for different types of color blindness
 const colorFilters = {
   protanopia: `
-    contrast(1.1)
-    saturate(1.5)
-    hue-rotate(20deg)
-    brightness(1.1)
+    /* Stronger remap so red hues move toward cooler tones (blue/cyan). */
+    contrast(1.2)
+    saturate(1.35)
+    hue-rotate(105deg)
+    brightness(1.08)
   `,
   deuteranopia: `
     contrast(1.1)
