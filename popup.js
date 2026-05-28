@@ -46,7 +46,7 @@ const ZOOM_STEP = 10; // %
 
 // ── INIT ───────────────────────────────────────────────────────────────────
 document.addEventListener("DOMContentLoaded", () => {
-  window.scrollTo(0, 0);
+  forcePopupTop();
   loadSavedStates();
   setupThemeToggle();
 
@@ -150,7 +150,21 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   loadSelectionIntoDictionary(false);
+  forcePopupTop();
 });
+
+function forcePopupTop() {
+  const scrollTop = () => {
+    window.scrollTo(0, 0);
+    if (document.documentElement) document.documentElement.scrollTop = 0;
+    if (document.body) document.body.scrollTop = 0;
+  };
+
+  scrollTop();
+  requestAnimationFrame(scrollTop);
+  setTimeout(scrollTop, 0);
+  setTimeout(scrollTop, 60);
+}
 
 // ── LOAD SAVED STATES ──────────────────────────────────────────────────────
 function loadSavedStates() {

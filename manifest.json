@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Site Ease",
-  "version": "1.4",
+  "version": "1.5",
   "description": "Site Ease is a tool designed to enhance web accessibility for individuals with visual impairments and color blindness.",
   "permissions": ["storage", "activeTab", "scripting"],
   "host_permissions": ["https://api.dictionaryapi.dev/*"],

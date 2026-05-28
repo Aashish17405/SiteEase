@@ -20,7 +20,7 @@
             <!-- Last Updated -->
             <div class="last-updated mb-6">
                 <p class="text-lg text-gray-600">
-                    <strong>Last Updated:</strong> June 2025
+                    <strong>Last Updated:</strong> May 2026
                 </p>
             </div>
 
@@ -48,10 +48,10 @@
                 </p>
                 <ul class="list-disc pl-6 space-y-2 text-xl text-gray-700">
                     <li>
-                        <strong>Accessibility Preferences:</strong> Your chosen settings for color blindness filters (Protanopia, Deuteranopia, Tritanopia, Tritanomaly, Achromatopsia) and dyslexia support
+                        <strong>Accessibility Preferences:</strong> Your chosen settings for color blindness filters (Protanopia, Deuteranopia, Tritanopia, Tritanomaly, Achromatopsia), font adjustments, and page magnifier controls
                     </li>
                     <li>
-                        <strong>Feature States:</strong> Which accessibility features are currently enabled or disabled
+                        <strong>Feature States:</strong> Which accessibility features are currently enabled or disabled (such as image show/hide and text-to-speech controls)
                     </li>
                 </ul>
                 <p class="text-xl text-gray-700 leading-relaxed mt-4">
@@ -76,8 +76,9 @@
                 </p>
                 <ul class="list-disc pl-6 space-y-2 text-xl text-gray-700">
                     <li><strong>Persistent Settings:</strong> Remember your accessibility preferences across browser sessions and tabs</li>
-                    <li><strong>Real-time Adjustments:</strong> Apply color filters and dyslexia-friendly fonts to web pages you visit</li>
+                    <li><strong>Real-time Adjustments:</strong> Apply color filters, dyslexia-friendly fonts, font size updates, and page magnification to web pages you visit</li>
                     <li><strong>Feature Management:</strong> Ensure only one color filter is active at a time while allowing dyslexia support to work alongside any filter</li>
+                    <li><strong>Selection-Based Tools:</strong> Read highlighted text aloud and fetch word meanings only when you explicitly trigger those actions</li>
                     <li><strong>Performance Optimization:</strong> Maintain smooth operation of the extension's features</li>
                 </ul>
             </div>
@@ -95,11 +96,14 @@
                     secure storage API (chrome.storage.sync). This data:
                 </p>
                 <ul class="list-disc pl-6 space-y-2 text-xl text-gray-700 mt-4">
-                    <li>Never leaves your device</li>
-                    <li>Is not transmitted to any external servers</li>
+                    <li>Is used only for extension functionality and settings persistence</li>
+                    <li>May sync across your Chrome browsers through your Google account if Chrome Sync is enabled</li>
                     <li>Is not accessible to other extensions or websites</li>
                     <li>Is automatically cleared when you uninstall the extension</li>
                 </ul>
+                <p class="text-xl text-gray-700 leading-relaxed mt-4">
+                    For dictionary lookups, the selected word may be sent to the configured dictionary API only when you request a meaning. We do not send your full page content, and we do not store that lookup history on our own servers.
+                </p>
             </div>
 
             <!-- Security -->
@@ -113,7 +117,7 @@
                 </p>
                 <ul class="list-disc pl-6 space-y-2 text-xl text-gray-700">
                     <li><strong>Local Storage:</strong> All data is stored locally in your browser using Chrome's secure storage API</li>
-                    <li><strong>No External Communication:</strong> The extension does not make any network requests or transmit data</li>
+                    <li><strong>Limited External Requests:</strong> The extension only makes network requests when required for dictionary API lookups initiated by you</li>
                     <li><strong>Minimal Permissions:</strong> We only request the necessary permissions (storage and activeTab) to function</li>
                     <li><strong>Content Security Policy:</strong> Strict CSP implementation to prevent unauthorized script execution</li>
                     <li><strong>Regular Updates:</strong> Continuous security maintenance and updates through the Chrome Web Store</li>

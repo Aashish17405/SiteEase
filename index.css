@@ -32,6 +32,12 @@ body {
   padding-top: 2px;
 }
 
+.se-header + .section-label {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 2px;
+}
+
 /* ── Feature Row Wrapper ─────────────────────────────── */
 .feature-row {
   display: flex;
